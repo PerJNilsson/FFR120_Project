@@ -1,67 +1,70 @@
+from collections import deque
 from numpy.random import randint, rand
+import matplotlib.pyplot as plt
 import itertools
+import utility
 import abc
 import numpy as np
 
 
 class Animal(abc.ABC):
-    def __init__(self, latticeLength, x=None, y=None, visibilityRadius=2,
+    animals = None
+
+    def initialize(latticeLength):
+        Animal._latticeLength = latticeLength
+        Animal.animals = [[deque() for i in range(latticeLength)]
+                          for j in range(latticeLength)]
+
+    def __init__(self, x=None, y=None, visibilityRadius=2,
                  reproductionRate=0.005, child=False):
-        self.child = child
-        self._latticeLength = latticeLength
+        self._child = child
         self._visibilityRadius = visibilityRadius
         self._reproductionRate = reproductionRate
         if x is None:
-            self.x = randint(latticeLength)
-        else:
-            self.x = x
+            x = randint(self._latticeLength)
         if y is None:
-            self.y = randint(latticeLength)
-        else:
-            self.y = y
+            y = randint(self._latticeLength)
+        self.animals[y][x].append(self)
 
     def __repr__(self):
-        return("Animal is at x = {}, y = {}".format(self.x, self.y))
+        return("Animal exists")
 
     def _periodic(self, value):
         return (value + self._latticeLength) % self._latticeLength
 
-    def visibility(self):
+    def _visibility(self):
         radius = self._visibilityRadius
         xList = [self._periodic(self.x + i) for i in range(-radius, radius)]
         yList = [self._periodic(self.y + i) for i in range(-radius, radius)]
         return itertools.product(xList, yList)
 
-        # Takes a target coordinate and move towards it. If the target coordinate is an empty list
-        # the function will call random walk.
     def step(self, targetCoord):
-        def choise(difference, sizeGrid):
+        def choice(difference, sizeGrid):
             if difference == 0:
                 return 0
-            if abs(difference) < sizeGrid/2:
+            if abs(difference) < sizeGrid / 2:
                 return np.sign(difference)
-            elif abs(difference) > sizeGrid/2:
-                return -1*np.sign(difference)
+            elif abs(difference) > sizeGrid / 2:
+                return -1 * np.sign(difference)
             else:
                 q = rand()
                 if q < 0.5:
                     return 1
                 else:
                     return -1
-
         xCoord = self.x
         yCoord = self.y
 
         # Check if to go right/left and up/down
-        diffX = targetCoord[0]-xCoord
-        diffY = targetCoord[1]-yCoord
+        diffX = targetCoord[0] - xCoord
+        diffY = targetCoord[1] - yCoord
 
         choices = [False, False]
         sizeGrid = self._latticeLength
-        a = choise(diffX, sizeGrid)
+        a = choice(diffX, sizeGrid)
         if a != 0:
             choices[0] = True
-        b = choise(diffY, sizeGrid)
+        b = choice(diffY, sizeGrid)
         if b != 0:
             choices[1] = True
 
@@ -75,78 +78,47 @@ class Animal(abc.ABC):
         else:
             self.y += b
 
-
-
-    @property
-    def x(self):
-        return self._x
-
-    @x.setter
-    def x(self, value):
-        self._x = self._periodic(value)
-
-    @property
-    def y(self):
-        return self._y
-
-    @y.setter
-    def y(self, value):
-        self._y = self._periodic(value)
-
-    def _random_walk(self):
-
-        r = rand()
-        if r < 0.2:
-            self.previousStep=np.random.randint(1,4,1)
-
-        if self.previousStep == 1:
-            self.x = self.x - 1
-        elif self.previousStep == 2:
-            self.y = self.y - 1
-        elif self.previousStep == 3:
-            self.x = self.x + 1
-        elif self.previousStep == 4:
-            self.y = self.y + 1
-
-        '''        
-        r = rand()
-        if r < 0.25:
-            self.x = self.x + 1
-        elif 0.25 <= r < 0.5:
-            self.x = self.x - 1
-        elif 0.5 <= r < 0.75:
-            self.y = self.y + 1
-        elif 0.75 <= r:
-            self.y = self.y - 1
-        '''
+    def _random_walk(self, x, y):
+        xTemp = x
+        yTemp = y
+        r = randint(1, 5)
+        if (r == 1):
+            xTemp += 1
+        elif (r == 2):
+            xTemp -= 1
+        elif (r == 3):
+            yTemp += 1
+        elif (r == 4):
+            yTemp -= 1
+        return (xTemp, yTemp)
 
     @abc.abstractmethod
-    def _look(self):
+    def _walk(self, x, y):
         pass
 
-    @abc.abstractmethod
-    def _walk(self):
-        pass
+    def _next_coordinates(self, x, y):
+        (xTemp, yTemp) = self._walk(self, x, y)
+        xTemp = utility.periodic(xTemp, Animal._latticeLength)
+        yTemp = utility.periodic(yTemp, Animal._latticeLength)
+        return (xTemp, yTemp)
 
-    @abc.abstractmethod
-    def _eat(self):
-        pass
+    def iterate():
+        newAnimals = [[deque() for i in range(Animal._latticeLength)]
+                          for j in range(Animal._latticeLength)]
+        for y in range(Animal._latticeLength):
+            for x in range(Animal._latticeLength):
+                for elem in Animal.animals[y][x]:
+                    xTemp, yTemp = elem._next_coordinates(x, y)
+                    newAnimals[yTemp][xTemp].append(elem)
+        Animal.animals = newAnimals
 
-    @abc.abstractmethod
-    def _reproduce(self):
-        pass
-
-    @abc.abstractmethod
-    def _die(self):
-        pass
-
-    def __call__(self):
-        if self.child:
-            self.child = False
-        else:
-            self._look()
-            self._walk()
-            self._eat()
-            self._reproduce()
-            self._die()
+    def update_handler(handler):
+        ys = deque()
+        xs = deque()
+        for y in range(Animal._latticeLength):
+            for x in range(Animal._latticeLength):
+                if Animal.animals[y][x]:
+                    xs.append(x)
+                    ys.append(y)
+        handler.set_data(xs, ys)
 

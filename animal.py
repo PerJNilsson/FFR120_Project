@@ -2,6 +2,7 @@ from numpy.random import randint, rand
 import itertools
 import abc
 import numpy as np
+import random
 
 
 class Animal(abc.ABC):
@@ -108,17 +109,24 @@ class Animal(abc.ABC):
         elif self.previousStep == 4:
             self.y = self.y + 1
 
-        '''        
-        r = rand()
-        if r < 0.25:
-            self.x = self.x + 1
-        elif 0.25 <= r < 0.5:
-            self.x = self.x - 1
-        elif 0.5 <= r < 0.75:
-            self.y = self.y + 1
-        elif 0.75 <= r:
-            self.y = self.y - 1
-        '''
+    def follow(self, objects, kindOfTarget):
+        possibleFollowList = []
+        sizeGrid = self._latticeLength
+        #1. Get position of the prey
+        tmpVar = [self.x, self.y]
+        #2. Get the visibility sphere
+        visSquare = list(self.visibility())
+        #3. Look around if anyone is nearby
+        for object in objects:
+            cord = (object.x, object.y)
+            if cord in visSquare:
+                possibleFollowList.append(cord)
+        if(kindOfTarget=='prey'):
+            possibleFollowList.remove((self.x, self.y))
+        toFollow = None
+        if possibleFollowList:
+            toFollow = random.choice(possibleFollowList)
+        return toFollow
 
     @abc.abstractmethod
     def _look(self):
@@ -149,4 +157,11 @@ class Animal(abc.ABC):
             self._eat()
             self._reproduce()
             self._die()
+
+    def update_pointers(self, preys, predators, plants= None, plantClusters = None):
+        self.preys = preys
+        self.predators = predators
+        self.plants = plants
+        self.plantClusters = plantClusters
+
 

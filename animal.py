@@ -107,8 +107,8 @@ class Animal(abc.ABC):
     def iterate():
         Animal.xs = deque()
         Animal.ys = deque()
-        newAnimals = [[deque() for i in range(Animal._latticeLength)]
-                          for j in range(Animal._latticeLength)]
+        newAnimals = [[deque() for i in range(Animal._latticeLength)] for j in
+                      range(Animal._latticeLength)]
         for y in range(Animal._latticeLength):
             for x in range(Animal._latticeLength):
                 for elem in Animal.animals[y][x]:

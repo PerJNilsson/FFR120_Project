@@ -94,7 +94,7 @@ class Animal(abc.ABC):
             if xCo == x and yCo == y:
                 continue
             if objects[yCo][xCo]:
-                possibleFollowList.append([xCo, yCo])
+                possibleFollowList.append((xCo, yCo))
 
         toFollow = None
         if possibleFollowList:

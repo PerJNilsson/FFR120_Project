@@ -13,7 +13,7 @@ class Wolves(Animal):
 def main():
     nLatticeLength = 256
     Wolves.initialize(nLatticeLength)
-    Sheep.initialize(nLatticeLength)
+    Sheep.initialize()
     [Sheep() for i in range(10)]
     [Wolves() for i in range(5)]
     plt.ioff()

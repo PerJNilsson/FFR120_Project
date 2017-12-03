@@ -31,10 +31,10 @@ class Animal(abc.ABC):
     def __repr__(self):
         return("Animal exists")
 
-    def _visibility(self):
+    def _visibility(self, x, y):
         radius = self._visibilityRadius
-        xList = [self._periodic(self.x + i) for i in range(-radius, radius)]
-        yList = [self._periodic(self.y + i) for i in range(-radius, radius)]
+        xList = [self._periodic(x + i) for i in range(-radius, radius)]
+        yList = [self._periodic(y + i) for i in range(-radius, radius)]
         return itertools.product(xList, yList)
 
     def _step(self, x, y, targetCoord):

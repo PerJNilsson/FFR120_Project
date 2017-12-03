@@ -37,7 +37,7 @@ class Animal(abc.ABC):
         yList = [self._periodic(self.y + i) for i in range(-radius, radius)]
         return itertools.product(xList, yList)
 
-    def step(self, targetCoord):
+    def _step(self, x, y, targetCoord):
         def choice(difference, sizeGrid):
             if difference == 0:
                 return 0
@@ -51,15 +51,12 @@ class Animal(abc.ABC):
                     return 1
                 else:
                     return -1
-        xCoord = self.x
-        yCoord = self.y
-
         # Check if to go right/left and up/down
-        diffX = targetCoord[0] - xCoord
-        diffY = targetCoord[1] - yCoord
+        diffX = targetCoord[0] - x
+        diffY = targetCoord[1] - y
 
         choices = [False, False]
-        sizeGrid = self._latticeLength
+        sizeGrid = Animal._latticeLength
         a = choice(diffX, sizeGrid)
         if a != 0:
             choices[0] = True
@@ -68,14 +65,15 @@ class Animal(abc.ABC):
             choices[1] = True
 
         if sum(choices) == 0:
-            return
+            return (x, y)
         result = randint(sum(choices))
         if result == 1:
-            self.y += b
+            y += b
         elif choices[0]:
-            self.x += a
+            x += a
         else:
-            self.y += b
+            y += b
+        return (x, y)
 
     def _random_walk(self, x, y):
         xTemp = x

@@ -14,10 +14,6 @@ class Prey(Animal):
         self.iterationsMovingToFood = 0
         self.previousStep = np.random.randint(1, 4, 1)
 
-    @classmethod
-    def update_pointers(cls):
-        cls.preys = Prey.grid
-
     # def _look(self):
         # pass
         # self.LookForPredator()
@@ -33,7 +29,7 @@ class Prey(Animal):
 
         r = rand()
         if r < self._followHerdProbability:
-            coordinates = self._follow(x, y, Prey.preys)
+            coordinates = self._follow(x, y, Prey.grid)
             if coordinates:
                 return self._step(x, y, coordinates)
         return self._random_walk(x, y)

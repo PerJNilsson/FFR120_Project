@@ -5,6 +5,7 @@ import itertools
 import utility
 import abc
 import numpy as np
+import random
 
 
 class Animal(abc.ABC):
@@ -74,6 +75,22 @@ class Animal(abc.ABC):
         else:
             y += b
         return (x, y)
+
+    def follow(self, x,y, objects):
+        possibleFollowList = []
+        #2. Get the visibility sphere
+        visSquare = list(self.visibility(x,y))
+        #3. Look around if anyone is nearby
+        for xCo, yCo in visSquare:
+            if xCo == x and yCo == y:
+                continue
+            if objects[xCo][yCo]:
+                possibleFollowList.append([xCo, yCo])
+        toFollow = None
+        if possibleFollowList:
+            toFollow = random.choice(possibleFollowList)
+        return toFollow
+
 
     def _random_walk(self, x, y):
         xTemp = x

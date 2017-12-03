@@ -103,6 +103,8 @@ class Animal(abc.ABC):
         return (xTemp, yTemp)
 
     def iterate():
+        Animal.xs = deque()
+        Animal.ys = deque()
         newAnimals = [[deque() for i in range(Animal._latticeLength)]
                           for j in range(Animal._latticeLength)]
         for y in range(Animal._latticeLength):
@@ -110,15 +112,10 @@ class Animal(abc.ABC):
                 for elem in Animal.animals[y][x]:
                     xTemp, yTemp = elem._next_coordinates(x, y)
                     newAnimals[yTemp][xTemp].append(elem)
+                    xs.append(x)
+                    ys.append(y)
         Animal.animals = newAnimals
 
     def update_handler(handler):
-        ys = deque()
-        xs = deque()
-        for y in range(Animal._latticeLength):
-            for x in range(Animal._latticeLength):
-                if Animal.animals[y][x]:
-                    xs.append(x)
-                    ys.append(y)
         handler.set_data(xs, ys)
 

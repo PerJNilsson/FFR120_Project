@@ -23,7 +23,7 @@ class Predator(Animal):
         targetToChase = self._follow(x, y, Predator.preys)
         if targetToChase:
             x, y = self._step(x, y, targetToChase)
-            self._step(x, y, targetToChase)
+            return self._step(x, y, targetToChase)
         return self._random_walk(x, y)
 
     def _create_child(self, x, y):

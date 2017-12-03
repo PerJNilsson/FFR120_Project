@@ -10,16 +10,19 @@ import random
 
 class Animal(abc.ABC):
     @classmethod
-    def initialize(cls, latticeLength=None):
+    def initialize(cls, latticeLength=None, maxHunger=100, life=2000):
+        cls.maxHunger = maxHunger
+        cls.life = life
         if latticeLength:
             Animal._latticeLength = latticeLength
         cls.grid = [[deque() for i in range(Animal._latticeLength)] for j in
-                          range(Animal._latticeLength)]
+                    range(Animal._latticeLength)]
         cls.xs = None
         cls.ys = None
 
     def __init__(self, x=None, y=None, visibilityRadius=2,
                  reproductionRate=0.005, child=False):
+
         self._child = child
         self._visibilityRadius = visibilityRadius
         self._reproductionRate = reproductionRate
@@ -29,13 +32,20 @@ class Animal(abc.ABC):
             y = randint(Animal._latticeLength)
         type(self).grid[y][x].append(self)
 
+        if child:
+            self.hunger = round(type(self).maxHunger / 4)
+        else:
+            self.hunger = type(self).maxHunger
+
     def __repr__(self):
         return("Animal exists")
 
     def _visibility(self, x, y):
         radius = self._visibilityRadius
-        xList = [utility.periodic(x + i, Animal._latticeLength) for i in range(-radius, radius)]
-        yList = [utility.periodic(y + i, Animal._latticeLength) for i in range(-radius, radius)]
+        xList = [utility.periodic(x + i, Animal._latticeLength) for i in
+                 range(-radius, radius)]
+        yList = [utility.periodic(y + i, Animal._latticeLength) for i in
+                 range(-radius, radius)]
         return itertools.product(xList, yList)
 
     def _step(self, x, y, targetCoord):
@@ -110,6 +120,21 @@ class Animal(abc.ABC):
     def _walk(self, x, y):
         pass
 
+    @abc.abstractmethod
+    def _eat(self, x, y):
+        pass
+
+    def _die(self, x, y):
+        if self.life == 0 or self.hunger == 0:
+            return True
+        self.life -= 1
+        self.hunger -= 1
+
+
+    @abc.abstractmethod
+    def _reproduce(self, x, y):
+        pass
+
     def _next_coordinates(self, x, y):
         (xTemp, yTemp) = self._walk(x, y)
         xTemp = utility.periodic(xTemp, Animal._latticeLength)
@@ -125,6 +150,10 @@ class Animal(abc.ABC):
         for y in range(cls._latticeLength):
             for x in range(cls._latticeLength):
                 for elem in cls.grid[y][x]:
+                    elem._eat(x, y)
+                    if elem._die(x, y):
+                        continue
+                    elem._reproduce(x, y)
                     xTemp, yTemp = elem._next_coordinates(x, y)
                     newGrid[yTemp][xTemp].append(elem)
                     (cls.xs).append(x)

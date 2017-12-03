@@ -123,7 +123,7 @@ class Animal(abc.ABC):
     def _eat(self, x, y):
         pass
 
-    def _die(self, x, y):
+    def _die(self):
         if self.life == 0 or self.hunger == 0:
             return True
         self.life -= 1
@@ -165,7 +165,7 @@ class Animal(abc.ABC):
                     xTemp, yTemp = elem._next_coordinates(x, y)
                     newGrid[yTemp][xTemp].append(elem)
                     elem._eat(xTemp, yTemp)
-                    if elem._die(xTemp, yTemp):
+                    if elem._die():
                         continue
                     (cls.xs).append(xTemp)
                     (cls.ys).append(yTemp)

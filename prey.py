@@ -14,8 +14,9 @@ class Prey(Animal):
         self.iterationsMovingToFood = 0
         self.previousStep = np.random.randint(1, 4, 1)
 
-    def update_pointers():
-        Prey.preys = Prey.grid
+    @classmethod
+    def update_pointers(cls):
+        cls.preys = Prey.grid
 
     # def _look(self):
         # pass

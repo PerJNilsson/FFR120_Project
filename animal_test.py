@@ -7,7 +7,7 @@ def main():
     nLatticeLength = 100
     Prey.initialize(nLatticeLength, life=10000, maxHunger=10000)
     Predator.initialize(maxHunger=155)
-    [Prey() for i in range(100)]
+    [Prey() for i in range(10)]
     [Predator() for i in range(50)]
     Prey.update_pointers()
     Predator.update_pointers(Prey.grid)
@@ -18,6 +18,7 @@ def main():
     preyHandle, = plt.plot([], [],  'ob')
     for i in range(5000):
         Prey.iterate()
+        Predator.update_pointers(Prey.grid)
         Predator.iterate()
         Prey.update_handler(preyHandle)
         Predator.update_handler(predatorsHandle)

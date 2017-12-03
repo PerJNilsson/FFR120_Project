@@ -13,8 +13,8 @@ class Animal(abc.ABC):
     def initialize(cls, latticeLength=None):
         if latticeLength:
             Animal._latticeLength = latticeLength
-        cls.grid = [[deque() for i in range(latticeLength)] for j in
-                          range(latticeLength)]
+        cls.grid = [[deque() for i in range(Animal._latticeLength)] for j in
+                          range(Animal._latticeLength)]
         cls.xs = None
         cls.ys = None
 

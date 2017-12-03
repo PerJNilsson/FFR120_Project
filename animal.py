@@ -9,6 +9,8 @@ import numpy as np
 
 class Animal(abc.ABC):
     animals = None
+    xs = None
+    ys = None
 
     def initialize(latticeLength):
         Animal._latticeLength = latticeLength
@@ -97,7 +99,7 @@ class Animal(abc.ABC):
         pass
 
     def _next_coordinates(self, x, y):
-        (xTemp, yTemp) = self._walk(self, x, y)
+        (xTemp, yTemp) = self._walk(x, y)
         xTemp = utility.periodic(xTemp, Animal._latticeLength)
         yTemp = utility.periodic(yTemp, Animal._latticeLength)
         return (xTemp, yTemp)
@@ -112,10 +114,10 @@ class Animal(abc.ABC):
                 for elem in Animal.animals[y][x]:
                     xTemp, yTemp = elem._next_coordinates(x, y)
                     newAnimals[yTemp][xTemp].append(elem)
-                    xs.append(x)
-                    ys.append(y)
+                    (Animal.xs).append(x)
+                    (Animal.ys).append(y)
         Animal.animals = newAnimals
 
     def update_handler(handler):
-        handler.set_data(xs, ys)
+        handler.set_data(Animal.xs, Animal.ys)
 

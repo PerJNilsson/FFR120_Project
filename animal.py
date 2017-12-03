@@ -23,9 +23,9 @@ class Animal(abc.ABC):
         self._visibilityRadius = visibilityRadius
         self._reproductionRate = reproductionRate
         if x is None:
-            x = randint(self._latticeLength)
+            x = randint(Animal._latticeLength)
         if y is None:
-            y = randint(self._latticeLength)
+            y = randint(Animal._latticeLength)
         type(self).grid[y][x].append(self)
 
     def __repr__(self):

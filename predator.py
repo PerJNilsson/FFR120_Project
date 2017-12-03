@@ -1,4 +1,5 @@
 from animal import Animal
+from prey import Prey
 import numpy as np
 
 
@@ -8,19 +9,15 @@ class Predator(Animal):
         self.iterationsMovingToFood = 0
         self.previousStep = np.random.randint(1, 4, 1)
 
-    @classmethod
-    def update_pointers(cls, preys):
-        cls.preys = preys
-
     def _eat(self, x, y):
-        if Predator.preys[y][x]:
-            Predator.preys[y][x].pop()
+        if Prey.grid[y][x]:
+            Prey.grid[y][x].pop()
             self.hunger = Predator.maxHunger
 
     def _walk(self, x, y):
         if self.hunger > 150:
             return (x, y)
-        targetToChase = self._follow(x, y, Predator.preys)
+        targetToChase = self._follow(x, y, Prey.grid)
         if targetToChase:
             x, y = self._step(x, y, targetToChase)
             return self._step(x, y, targetToChase)

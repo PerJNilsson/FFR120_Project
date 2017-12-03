@@ -11,14 +11,14 @@ class Predator(Animal):
         self.previousStep = np.random.randint(1, 4, 1)
 
     def _eat(self, x, y):
-        if self.hunger > hungerBeforeChase:
+        if self.hunger > Predator.hungerBeforeChase:
             return
         if Prey.grid[y][x]:
             Prey.grid[y][x].pop()
             self.hunger = Predator.maxHunger
 
     def _walk(self, x, y):
-        if self.hunger > hungerBeforeChase:
+        if self.hunger > Predator.hungerBeforeChase:
             return (x, y)
         targetToChase = self._follow(x, y, Prey.grid)
         if targetToChase:

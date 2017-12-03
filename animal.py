@@ -34,8 +34,8 @@ class Animal(abc.ABC):
 
     def _visibility(self, x, y):
         radius = self._visibilityRadius
-        xList = [self._periodic(x + i) for i in range(-radius, radius)]
-        yList = [self._periodic(y + i) for i in range(-radius, radius)]
+        xList = [utility.periodic(x + i, Animal._latticeLength) for i in range(-radius, radius)]
+        yList = [utility.periodic(y + i, Animal._latticeLength) for i in range(-radius, radius)]
         return itertools.product(xList, yList)
 
     def _step(self, x, y, targetCoord):
@@ -76,10 +76,10 @@ class Animal(abc.ABC):
             y += b
         return (x, y)
 
-    def follow(self, x,y, objects):
+    def _follow(self, x,y, objects):
         possibleFollowList = []
         #2. Get the visibility sphere
-        visSquare = list(self.visibility(x,y))
+        visSquare = list(self._visibility(x,y))
         #3. Look around if anyone is nearby
         for xCo, yCo in visSquare:
             if xCo == x and yCo == y:

@@ -20,7 +20,7 @@ class Predator(Animal):
     def _walk(self, x, y):
         if self.hunger > 150:
             return (x, y)
-        targetToChase = self._follow(x, y, self.preys)
+        targetToChase = self._follow(x, y, Predator.preys)
         if targetToChase:
             x, y = self._step(x, y, targetToChase)
             self._step(x, y, targetToChase)

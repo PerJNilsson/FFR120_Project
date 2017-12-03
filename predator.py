@@ -22,25 +22,21 @@ class Predator(Animal):
 
 
 
-    def eatPrey(self, target):
+    def _eat(self, x, y):
         # Will eat the prey if they are on the same square
-        xCoords = self.x
-        yCoords = self.y
-        listOfPrey = self.preys
-        if xCoords == target[0] and yCoords == target[1]:
-            for prey in self.preys:
-                if prey.x == target[0] and prey.y == target[1]:
-                    prey._die(killed=True)
-                    self.hunger = self.maxHunger
+
+        #  Now want to check if a prey is on the same point, if they are it should die
+        if Predator.preyMatrix[y][x]:
+            Predator.preyMatrix.pop()
+            Predator.hunger = Predator.maxHunger
 
 
     #  Follow, if same point: eat.
     #  Searching for prey, need visibility sphere, list of prey
     #  If no prey, call random walk
-    def searchPrey(self):
+    def searchPrey(self, x, y):
         # Getting the coords of the predator
         if self.hunger < 150:  # If recently eaten, predator will not move
-            coordsPredator = [self.x, self.y]
             targetToChase = self._follow(x, y, self.prey)
             if targetToChase == None:
                 self._random_walk

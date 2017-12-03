@@ -130,10 +130,16 @@ class Animal(abc.ABC):
         self.life -= 1
         self.hunger -= 1
 
-
     @abc.abstractmethod
-    def _reproduce(self, x, y):
+    def _create_child(self, x, y, newGrid):
         pass
+
+    def _reproduce(self, x, y, newGrid):
+        if self.life < 50:
+            return
+        r = rand()
+        if self.reproductionRate < r:
+            return self._create_child(x, y, newGrid)
 
     def _next_coordinates(self, x, y):
         (xTemp, yTemp) = self._walk(x, y)
@@ -153,7 +159,7 @@ class Animal(abc.ABC):
                     elem._eat(x, y)
                     if elem._die(x, y):
                         continue
-                    elem._reproduce(x, y)
+                    elem._reproduce(x, y, newGrid)
                     xTemp, yTemp = elem._next_coordinates(x, y)
                     newGrid[yTemp][xTemp].append(elem)
                     (cls.xs).append(x)

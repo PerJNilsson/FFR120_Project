@@ -138,7 +138,7 @@ class Animal(abc.ABC):
         if self.life < 50:
             return
         r = rand()
-        if self.reproductionRate < r:
+        if self._reproductionRate < r:
             return self._create_child(x, y, newGrid)
 
     def _next_coordinates(self, x, y):

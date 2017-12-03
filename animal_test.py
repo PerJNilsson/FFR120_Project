@@ -1,35 +1,22 @@
-from animal import Animal
+from prey import Prey
 import matplotlib.pyplot as plt
-
-class Sheep(Animal):
-    def _walk(self, x, y):
-        mrWalker = self._follow(x, y, Sheep.grid)
-        if mrWalker:
-            return self._step(x,y, mrWalker)
-        return(self._random_walk(x,y))
-class Wolves(Animal):
-    def _walk(self, x, y):
-        return self._random_walk(x, y)
 
 
 def main():
     nLatticeLength = 512
-    Wolves.initialize(nLatticeLength)
-    Sheep.initialize()
-    [Sheep() for i in range(100)]
-    [Wolves() for i in range(1)]
+    Prey.initialize(nLatticeLength)
+    [Prey() for i in range(100)]
+    Prey.update_pointers()
     plt.ioff()
     plt.show()
     plt.axis([-1, nLatticeLength, -1, nLatticeLength])
-    handleSheep, = plt.plot([], [],  'or')
-    handleWolves, = plt.plot([], [],  'ob')
+    preyHandle, = plt.plot([], [],  'or')
     for i in range(5000):
-        Sheep.update_handler(handleSheep)
-        Sheep.iterate()
-        Wolves.iterate()
-        Wolves.update_handler(handleWolves)
+        Prey.iterate()
+        Prey.update_handler(preyHandle)
         plt.draw()
         plt.pause(0.0001)
+
 
 if __name__ == "__main__":
     main()

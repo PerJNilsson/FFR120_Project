@@ -30,23 +30,23 @@ class Predator(Animal):
         if xCoords == target[0] and yCoords == target[1]:
             for prey in self.preys:
                 if prey.x == target[0] and prey.y == target[1]:
-                    prey._die(killed = True)
+                    prey._die(killed=True)
                     self.hunger = self.maxHunger
 
 
-    # Follow, if same point: eat.
-    # Searching for prey, need visibility sphere, list of prey
-    # If no prey, call random walk
+    #  Follow, if same point: eat.
+    #  Searching for prey, need visibility sphere, list of prey
+    #  If no prey, call random walk
     def searchPrey(self):
         # Getting the coords of the predator
-        if self.hunger < 150: # If recently eaten will not move
+        if self.hunger < 150:  # If recently eaten, predator will not move
             coordsPredator = [self.x, self.y]
-            targetToChase = self.follow(self.preys, 'predator')
+            targetToChase = self._follow(x, y, self.prey)
             if targetToChase == None:
                 self._random_walk
             else:
-                self.step(targetToChase)
-                self.step(targetToChase)
+                self._step(targetToChase)
+                self._step(targetToChase)
                 self.eatPrey(targetToChase)
 
 

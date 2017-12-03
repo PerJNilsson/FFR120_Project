@@ -76,11 +76,11 @@ class Animal(abc.ABC):
             y += b
         return (x, y)
 
-    def _follow(self, x,y, objects):
+    def _follow(self, x, y, objects):
         possibleFollowList = []
-        #2. Get the visibility sphere
+        #  Get the visibility sphere
         visSquare = list(self._visibility(x,y))
-        #3. Look around if anyone is nearby
+        #  Look around if anyone is nearby
         for xCo, yCo in visSquare:
             if xCo == x and yCo == y:
                 continue

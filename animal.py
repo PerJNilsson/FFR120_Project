@@ -120,4 +120,3 @@ class Animal(abc.ABC):
 
     def update_handler(handler):
         handler.set_data(Animal.xs, Animal.ys)
-

@@ -7,9 +7,9 @@ class Sheep(Animal):
 
 
 def main():
-    nLatticeLength = 100
+    nLatticeLength = 256
     Sheep.initialize(nLatticeLength)
-    [Sheep() for i in range(100)]
+    [Sheep() for i in range(1000)]
     plt.ioff()
     plt.show()
     plt.axis([-1, nLatticeLength, -1, nLatticeLength])

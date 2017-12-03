@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 
 
 def main():
-    nLatticeLength = 512
+    nLatticeLength = 100
     Prey.initialize(nLatticeLength)
-    [Prey() for i in range(100)]
+    [Prey() for i in range(10)]
     Prey.update_pointers()
     plt.ioff()
     plt.show()

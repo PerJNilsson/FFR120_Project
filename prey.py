@@ -37,12 +37,10 @@ class Prey(Animal):
             if coordinates:
                 return self._step(x, y, coordinates)
         return self._random_walk(x, y)
-    
 
-    def _create_child(self, x, y, newGrid):
-        newBorn = Prey(x, y, self._followHerdProbability, self._visibilityRadius,
-                       child=True)
-        newGrid[y][x].append(newBorn)
+    def _create_child(self, x, y):
+        return Prey(x, y, self._followHerdProbability, self._visibilityRadius,
+                    child=True)
 
     def _eat(self, x, y):
         pass
@@ -100,20 +98,3 @@ class Prey(Animal):
             # Looks at all plants at a time.
             #self.plantToFollow = self.follow(self.plants, 'plant')
             self.iterationsMovingToFood = 0
-
-
-"""
-        # Returns coordinate of grass. If there are no grass in visibility sphere
-        # it should return a coordinate either follow another prey or random walk
-        
-        def searchGrass:
-            possibleGrassPlace
-            #1. Get position of the prey
-            if grass in visibilityRadius
-                possibleGrassPlace.add()
-
-            #if len(possibleGrassPlace) == 0: This should not be implemented here
-            #	walk or follow
-
-            possibleGrassPlace = random.choice(possibleGrassPlace)
-"""

@@ -131,15 +131,16 @@ class Animal(abc.ABC):
         self.hunger -= 1
 
     @abc.abstractmethod
-    def _create_child(self, x, y, newGrid):
+    def _create_child(self, x, y):
         pass
 
-    def _reproduce(self, x, y, newGrid):
+    def _reproduce(self):
         if self.life < 50:
-            return
+            return False
         r = rand()
-        if self._reproductionRate < r:
-            return self._create_child(x, y, newGrid)
+        if r < self._reproductionRate:
+            return True
+        return False
 
     def _next_coordinates(self, x, y):
         (xTemp, yTemp) = self._walk(x, y)
@@ -151,19 +152,22 @@ class Animal(abc.ABC):
     def iterate(cls):
         cls.xs = deque()
         cls.ys = deque()
-        newGrid = [[deque() for i in range(cls._latticeLength)] for j in
-                   range(cls._latticeLength)]
-        for y in range(cls._latticeLength):
-            for x in range(cls._latticeLength):
-                for elem in cls.grid[y][x]:
+        newGrid = [[deque() for i in range(Animal._latticeLength)] for j in
+                   range(Animal._latticeLength)]
+        for y in range(Animal._latticeLength):
+            for x in range(Animal._latticeLength):
+                for elem in list(cls.grid[y][x]):
                     elem._eat(x, y)
                     if elem._die(x, y):
                         continue
-                    elem._reproduce(x, y, newGrid)
+                    if elem._reproduce():
+                        newGrid[y][x].append(elem._create_child(x, y))
+                        (cls.xs).append(x)
+                        (cls.ys).append(y)
                     xTemp, yTemp = elem._next_coordinates(x, y)
                     newGrid[yTemp][xTemp].append(elem)
-                    (cls.xs).append(x)
-                    (cls.ys).append(y)
+                    (cls.xs).append(xTemp)
+                    (cls.ys).append(yTemp)
         cls.grid = newGrid
 
     @classmethod

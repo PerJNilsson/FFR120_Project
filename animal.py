@@ -93,7 +93,7 @@ class Animal(abc.ABC):
         for xCo, yCo in visSquare:
             if xCo == x and yCo == y:
                 continue
-            if objects[xCo][yCo]:
+            if objects[yCo][xCo]:
                 possibleFollowList.append([xCo, yCo])
 
         toFollow = None

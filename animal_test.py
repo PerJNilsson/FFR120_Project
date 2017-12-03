@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 
 
 def main():
-    nLatticeLength = 100
+    nLatticeLength = 20
     Prey.initialize(nLatticeLength, life=10000, maxHunger=10000)
     Predator.initialize(maxHunger=155)
     [Prey() for i in range(10)]
-    [Predator() for i in range(50)]
+    [Predator() for i in range(15)]
     Prey.update_pointers()
     Predator.update_pointers(Prey.grid)
     plt.ioff()
@@ -25,7 +25,7 @@ def main():
         plt.title("Prey = {}, Predators = {}".format(Prey.population,
                                                      Predator.population))
         plt.draw()
-        plt.pause(0.0001)
+        plt.pause(0.001)
 
 
 if __name__ == "__main__":

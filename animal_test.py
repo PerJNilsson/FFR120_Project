@@ -21,6 +21,8 @@ def main():
         Predator.iterate()
         Prey.update_handler(preyHandle)
         Predator.update_handler(predatorsHandle)
+        plt.title("Prey = {}, Predators = {}".format(Prey.population,
+                                                     Predator.population))
         plt.draw()
         plt.pause(0.0001)
 

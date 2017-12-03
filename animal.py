@@ -151,6 +151,7 @@ class Animal(abc.ABC):
     def iterate(cls):
         cls.xs = deque()
         cls.ys = deque()
+        cls.population = 0
         newGrid = [[deque() for i in range(Animal._latticeLength)] for j in
                    range(Animal._latticeLength)]
         for y in range(Animal._latticeLength):
@@ -160,6 +161,7 @@ class Animal(abc.ABC):
                         newGrid[y][x].append(elem._create_child(x, y))
                         (cls.xs).append(x)
                         (cls.ys).append(y)
+                        cls.population += 1
                     xTemp, yTemp = elem._next_coordinates(x, y)
                     newGrid[yTemp][xTemp].append(elem)
                     elem._eat(xTemp, yTemp)
@@ -167,6 +169,7 @@ class Animal(abc.ABC):
                         continue
                     (cls.xs).append(xTemp)
                     (cls.ys).append(yTemp)
+                    cls.population += 1
         cls.grid = newGrid
 
     @classmethod

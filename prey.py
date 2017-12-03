@@ -33,7 +33,7 @@ class Prey(Animal):
 
         r = rand()
         if r < self._followHerdProbability:
-            coordinates = self._follow(x, y, self.preys)
+            coordinates = self._follow(x, y, Prey.preys)
             if coordinates:
                 return self._step(x, y, coordinates)
         return self._random_walk(x, y)

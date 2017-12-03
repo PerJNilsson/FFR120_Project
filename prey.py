@@ -14,9 +14,8 @@ class Prey(Animal):
         self.iterationsMovingToFood = 0
         self.previousStep = np.random.randint(1, 4, 1)
 
-    @classmethod
-    def update_pointers(cls):
-        cls.preys = Prey.grid
+    def update_pointers():
+        Prey.preys = Prey.grid
 
     # def _look(self):
         # pass
@@ -38,10 +37,6 @@ class Prey(Animal):
                 return self._step(x, y, coordinates)
         return self._random_walk(x, y)
 
-    def _create_child(self, x, y):
-        return Prey(x, y, self._followHerdProbability, self._visibilityRadius,
-                    child=True)
-
     def _eat(self, x, y):
         pass
         # Checks if the food has been reached.
@@ -57,6 +52,9 @@ class Prey(Animal):
         #         if self.hunger > Prey.maxHunger:
         #             self.hunger = Prey.maxHunger
 
+    def _create_child(self, x, y):
+        return Prey(x, y, self._followHerdProbability, self._visibilityRadius,
+                    child=True)
 
     def LookForPlant(self):
         if np.size(self.plantToFollow) == 2:

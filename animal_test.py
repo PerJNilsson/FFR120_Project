@@ -1,19 +1,26 @@
 from prey import Prey
+from predator import Predator
 import matplotlib.pyplot as plt
 
 
 def main():
     nLatticeLength = 100
-    Prey.initialize(nLatticeLength)
-    [Prey() for i in range(10)]
+    Prey.initialize(nLatticeLength, life=10000, maxHunger=10000)
+    Predator.initialize(maxHunger=155)
+    [Prey() for i in range(100)]
+    [Predator() for i in range(50)]
     Prey.update_pointers()
+    Predator.update_pointers(Prey.grid)
     plt.ioff()
     plt.show()
     plt.axis([-1, nLatticeLength, -1, nLatticeLength])
-    preyHandle, = plt.plot([], [],  'or')
+    predatorsHandle, = plt.plot([], [],  'or')
+    preyHandle, = plt.plot([], [],  'ob')
     for i in range(5000):
         Prey.iterate()
+        Predator.iterate()
         Prey.update_handler(preyHandle)
+        Predator.update_handler(predatorsHandle)
         plt.draw()
         plt.pause(0.0001)
 

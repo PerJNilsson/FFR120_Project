@@ -1,6 +1,5 @@
 from collections import deque
 from numpy.random import randint, rand
-import matplotlib.pyplot as plt
 import itertools
 import utility
 import abc
@@ -35,7 +34,7 @@ class Animal(abc.ABC):
         if child:
             self.hunger = round(type(self).maxHunger / 4)
         else:
-            self.hunger = type(self).maxHunger
+            self.hunger = type(self).maxHunger / 2
 
     def __repr__(self):
         return("Animal exists")
@@ -96,11 +95,11 @@ class Animal(abc.ABC):
                 continue
             if objects[xCo][yCo]:
                 possibleFollowList.append([xCo, yCo])
+
         toFollow = None
         if possibleFollowList:
             toFollow = random.choice(possibleFollowList)
         return toFollow
-
 
     def _random_walk(self, x, y):
         xTemp = x
@@ -157,15 +156,15 @@ class Animal(abc.ABC):
         for y in range(Animal._latticeLength):
             for x in range(Animal._latticeLength):
                 for elem in list(cls.grid[y][x]):
-                    elem._eat(x, y)
-                    if elem._die(x, y):
-                        continue
                     if elem._reproduce():
                         newGrid[y][x].append(elem._create_child(x, y))
                         (cls.xs).append(x)
                         (cls.ys).append(y)
                     xTemp, yTemp = elem._next_coordinates(x, y)
                     newGrid[yTemp][xTemp].append(elem)
+                    elem._eat(xTemp, yTemp)
+                    if elem._die(xTemp, yTemp):
+                        continue
                     (cls.xs).append(xTemp)
                     (cls.ys).append(yTemp)
         cls.grid = newGrid

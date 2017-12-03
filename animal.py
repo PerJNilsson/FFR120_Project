@@ -8,14 +8,14 @@ import numpy as np
 
 
 class Animal(abc.ABC):
-    animals = None
-    xs = None
-    ys = None
-
-    def initialize(latticeLength):
-        Animal._latticeLength = latticeLength
-        Animal.animals = [[deque() for i in range(latticeLength)]
-                          for j in range(latticeLength)]
+    @classmethod
+    def initialize(cls, latticeLength=None):
+        if latticeLength:
+            Animal._latticeLength = latticeLength
+        cls.grid = [[deque() for i in range(latticeLength)] for j in
+                          range(latticeLength)]
+        cls.xs = None
+        cls.ys = None
 
     def __init__(self, x=None, y=None, visibilityRadius=2,
                  reproductionRate=0.005, child=False):
@@ -26,13 +26,10 @@ class Animal(abc.ABC):
             x = randint(self._latticeLength)
         if y is None:
             y = randint(self._latticeLength)
-        self.animals[y][x].append(self)
+        type(self).grid[y][x].append(self)
 
     def __repr__(self):
         return("Animal exists")
-
-    def _periodic(self, value):
-        return (value + self._latticeLength) % self._latticeLength
 
     def _visibility(self):
         radius = self._visibilityRadius
@@ -104,19 +101,21 @@ class Animal(abc.ABC):
         yTemp = utility.periodic(yTemp, Animal._latticeLength)
         return (xTemp, yTemp)
 
-    def iterate():
-        Animal.xs = deque()
-        Animal.ys = deque()
-        newAnimals = [[deque() for i in range(Animal._latticeLength)] for j in
-                      range(Animal._latticeLength)]
-        for y in range(Animal._latticeLength):
-            for x in range(Animal._latticeLength):
-                for elem in Animal.animals[y][x]:
+    @classmethod
+    def iterate(cls):
+        cls.xs = deque()
+        cls.ys = deque()
+        newGrid = [[deque() for i in range(cls._latticeLength)] for j in
+                   range(cls._latticeLength)]
+        for y in range(cls._latticeLength):
+            for x in range(cls._latticeLength):
+                for elem in cls.grid[y][x]:
                     xTemp, yTemp = elem._next_coordinates(x, y)
-                    newAnimals[yTemp][xTemp].append(elem)
-                    (Animal.xs).append(x)
-                    (Animal.ys).append(y)
-        Animal.animals = newAnimals
+                    newGrid[yTemp][xTemp].append(elem)
+                    (cls.xs).append(x)
+                    (cls.ys).append(y)
+        cls.grid = newGrid
 
-    def update_handler(handler):
-        handler.set_data(Animal.xs, Animal.ys)
+    @classmethod
+    def update_handler(cls, handler):
+        handler.set_data(cls.xs, cls.ys)

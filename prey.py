@@ -5,7 +5,7 @@ import numpy as np
 
 class Prey(Animal):
 
-    maxHunger = 100# The maximum amount of food the prey can store.
+    maxHunger = 100  # The maximum amount of food the prey can store.
 
     # Example of using a parent's constructor
     def __init__(self, nLatticeLength, x=None, y=None,
@@ -14,25 +14,22 @@ class Prey(Animal):
         super().__init__(nLatticeLength, x, y, visibilityRadius, child=child)
         self.life = 2000
         if child:
-            self.hunger = round(Prey.maxHunger/4) # Children start out with semi-full hunger bar.
+            self.hunger = round(Prey.maxHunger/4)  # Children start out with semi-full hunger bar.
         else:
-            self.hunger = Prey.maxHunger # The initial preys start out with full hunger bar.
+            self.hunger = Prey.maxHunger  # The initial preys start out with full hunger bar.
 
-        self.plantToFollow = [] # Coordinates to the plant which are top be eaten.
-        self.iterationsMovingToFood=0 # Counts the number of iterations the prey has been moving to a certain plant.
+        self.plantToFollow = []  # Coordinates to the plant which are top be eaten.
+        self.iterationsMovingToFood = 0  # Counts the number of iterations the prey has been moving to a certain plant.
         self.previousStep=np.random.randint(1,4,1) # 1: left, 2: down, 3: right, 4: up
 
         # Returns coordinate of a prey to follow. If there are no prey within the
         # visibility radius it should random walk....
-    def update_pointers(self, preys, plants, plantClusters):
-        self.preys = preys
-        self.plants = plants
-        self.plantClusters = plantClusters
 
     def _look(self):
+        pass
         #self.LookForPredator()
 
-        self.LookForPlant()
+        #self.LookForPlant()
 
         #self.LookForPrey()
 
@@ -65,11 +62,7 @@ class Prey(Animal):
                 if self.hunger > Prey.maxHunger:
                     self.hunger = Prey.maxHunger
 
-    def _die(self):
-        if self.life == 0 or self.hunger == 0:
-            self.preys.remove(self)
-        self.life -= 1
-        self.hunger -= 1
+
 
     def _reproduce(self):
         if self.life < 50:
@@ -79,30 +72,19 @@ class Prey(Animal):
             newBorn = Prey(self._latticeLength, self.x, self.y,
                            followHerdProbability=self.followHerdProbability,
                            visibilityRadius=self._visibilityRadius, child=True)
-            newBorn.update_pointers(self.preys, self.plants, self.plantClusters)
+            newBorn.update_pointers(self.preys, self.predators, self.plants, self.plantClusters)
             self.preys.append(newBorn)
 
-    def follow(self, objects, kindOfTarget):
-        possibleFollowList = []
-        sizeGrid = self._latticeLength
-        #1. Get position of the prey
-        tmpVar = [self.x, self.y]
-        #2. Get the visibility sphere
-        visSquare = list(self.visibility())
-        #3. Look around if anyone is nearby
-        for object in objects:
-            cord = (object.x, object.y)
-            if cord in visSquare:
-                possibleFollowList.append(cord)
-        if(kindOfTarget=='prey'):
-            possibleFollowList.remove((self.x, self.y))
-        toFollow = None
-        if possibleFollowList:
-            toFollow = random.choice(possibleFollowList)
-        return toFollow
+
         #if len(possibleFollowList) == 0: # If there are no other prey nearby
         #		prey.randomWalk or whatever. This shouldnot be implemented here
-
+    def _die(self, killed = False):
+        if self.life == 0 or self.hunger == 0:
+            self.preys.remove(self)
+        if killed == True:
+            self.preys.remove(self)
+        self.life -= 1
+        self.hunger -= 1
 
     def LookForPlant(self):
         if np.size(self.plantToFollow)==2:

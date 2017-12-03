@@ -10,10 +10,10 @@ def main():
     nLatticeLength = 100
     Sheep.initialize(nLatticeLength)
     [Sheep() for i in range(100)]
-    handle, = plt.plot([], [],  'o')
+    plt.ioff()
     plt.show()
-    plt.set_xlimit(0, nLatticeLength)
-    plt.set_ylimit(0, nLatticeLength)
+    plt.axis([-1, nLatticeLength, -1, nLatticeLength])
+    handle, = plt.plot([], [],  'o')
     for i in range(1000):
         Sheep.iterate()
         Sheep.update_handler(handle)

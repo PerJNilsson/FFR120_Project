@@ -24,18 +24,18 @@ class Animal(abc.ABC):
         self._visibilityRadius = visibilityRadius
         self._reproductionRate = reproductionRate
         if x is None:
-            x = randint(self._latticeLength)
+            x = randint(Animal._latticeLength)
         if y is None:
-            y = randint(self._latticeLength)
+            y = randint(Animal._latticeLength)
         type(self).grid[y][x].append(self)
 
     def __repr__(self):
         return("Animal exists")
 
-    def _visibility(self):
+    def _visibility(self, x, y):
         radius = self._visibilityRadius
-        xList = [self._periodic(self.x + i) for i in range(-radius, radius)]
-        yList = [self._periodic(self.y + i) for i in range(-radius, radius)]
+        xList = [self._periodic(x + i) for i in range(-radius, radius)]
+        yList = [self._periodic(y + i) for i in range(-radius, radius)]
         return itertools.product(xList, yList)
 
     def _step(self, x, y, targetCoord):

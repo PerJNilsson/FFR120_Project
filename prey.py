@@ -69,10 +69,7 @@ class Prey(Animal):
                     self.LookForPrey()
 
     def _walk(self):
-        tmpVar = [self.x, self.y]
-
-
-        if np.size(self.predatorToAvoid) == 2:
+        if self.predatorToAvoid:
             self.stepAway(self.predatorToAvoid)
         else:
             if self.restTimer < 1:
@@ -84,14 +81,6 @@ class Prey(Animal):
                     r = rand()
                     if r < self.probabilityOfExploration and self.hunger < 380 and self.lastPlantEaten: # Only explore if the food is running low.
                         self.stepAway(self.lastPlantEaten)
-                        if tmpVar[0] == self.x and tmpVar[1] == self.y:
-                            diffX = abs(self.lastPlantEaten[0] - self.x)
-                            diffY = abs(self.lastPlantEaten[1] - self.y)
-                            if diffX > self._latticeLength / 2:
-                                diffX = self._latticeLength - diffX
-                            if diffY > self._latticeLength / 2:
-                                diffY = self._latticeLength - diffY
-                            print(diffX + diffY)
                     else:
                         self._random_walk()
             else:

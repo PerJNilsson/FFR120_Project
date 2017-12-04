@@ -7,13 +7,14 @@ class Predator(Animal):
     maxHunger = 200  # The maximum amount of food the predator can store.
 
     # Example of using a parent's constructor
-    def __init__(self, nLatticeLength, x=None, y=None, visibilityRadius=20, child=False):
+    def __init__(self, nLatticeLength, x=None, y=None, visibilityRadius=14, child=False, randomTurnProbability=0.4):
         super().__init__(nLatticeLength, x, y, visibilityRadius, child=child)
         self.life = 4000
+        self.randomTurnProbability = randomTurnProbability
         if child:
             self.hunger = round(Predator.maxHunger / 4)  # Children start out with semi-full hunger bar.
         else:
-            self.hunger = 150  # The initial preys start out with full hunger bar.
+            self.hunger = 150  # The initial preys start out with almost full hunger bar.
 
         self.iterationsMovingToFood = 0  # Counts the number of iterations the prey has been moving to a certain plant.
         self.previousStep = np.random.randint(1, 4, 1)  # 1: left, 2: down, 3: right, 4: up
@@ -43,7 +44,7 @@ class Predator(Animal):
             coordsPredator = [self.x, self.y]
             targetToChase = self.follow(self.preys, 'predator')
             if targetToChase == None:
-                self._random_walk
+                self._random_walk()
             else:
                 self.step(targetToChase)
                 self.step(targetToChase)

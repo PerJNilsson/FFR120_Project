@@ -11,6 +11,8 @@ import numpy
 class PlantCluster:
     numberOfPlantClusters=0
     numberOfClustersCreated=0 # Used to determine the unique ID value of each cluster.
+    checkRadius=0
+
 
     def __init__(self,coordinates):
         self.x=coordinates[0]
@@ -29,6 +31,11 @@ class PlantCluster:
     def SetNumberOfPlantsInCluster(self,numberOfPlants):
         self.numberOfPlantsInCluster=numberOfPlants
 
+    def setClusterCheckRadius(self,checkRadius):
+        PlantCluster.checkRadius = checkRadius
+
+    def getClusterCheckRadius(self):
+        return PlantCluster.checkRadius
 
 #=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=
 #=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=
@@ -36,12 +43,14 @@ class Plant:
     numberOfPlants=0    #
     plantObjects=[]     # Variables shared by all plant objects
     clusterObjects=[]   #
+    maxNumberOfCharges = 10
 
     def __init__(self,coordinates,clusterID):
         self.x=coordinates[0]
         self.y=coordinates[1]
         self.clusterID=clusterID # This ID value links the plant to the correct cluster (its parent cluster).
-        self.foodValue=20 # The amount of food recieved when consuming this plant.
+        self.foodValue=40 # The amount of food recieved when consuming this plant.
+        self.numberOfCharges = Plant.maxNumberOfCharges
         Plant.numberOfPlants += 1
 
     def __del__(self):
@@ -63,13 +72,15 @@ class Plant:
         # The function is called when a plant is eaten. It's assumed that the plant is destroyed when it's eaten (no charges).
         # The function also checks if the cluster should be destroyed aswell.
         #
-        for i in range(0, Plant.clusterObjects[0].numberOfPlantClusters,1): # Finds the cluster that the eaten plant belonged to
-            if (Plant.clusterObjects[i].ID == self.clusterID):
-                Plant.clusterObjects[i].numberOfPlantsInCluster -= 1
-                if (Plant.clusterObjects[i].numberOfPlantsInCluster == 0): # If the plant destroyed was the last plant
-                    Plant.clusterObjects.remove(Plant.clusterObjects[i])   # of the cluster the cluster will be destroyed
-                break
-        Plant.plantObjects.remove(self) # Removes the eaten plant
+        self.numberOfCharges -= 1 # one charge is used up
+        if self.numberOfCharges == 0:
+            for i in range(0, Plant.clusterObjects[0].numberOfPlantClusters,1): # Finds the cluster that the eaten plant belonged to
+                if (Plant.clusterObjects[i].ID == self.clusterID):
+                    Plant.clusterObjects[i].numberOfPlantsInCluster -= 1
+                    if (Plant.clusterObjects[i].numberOfPlantsInCluster == 0): # If the plant destroyed was the last plant
+                        Plant.clusterObjects.remove(Plant.clusterObjects[i])   # of the cluster the cluster will be destroyed
+                    break
+            Plant.plantObjects.remove(self) # Removes the eaten plant
 
 
 #=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=---=
@@ -168,9 +179,9 @@ def CheckBoundaryConditions(coordinates,gridSize):
     #
     # The function applies periodic boundary conditions. Used when new plants are generated.
     #
-    coordinates[coordinates[0::1, 0] > gridSize, 0] = coordinates[coordinates[0::1, 0] > gridSize, 0] - gridSize # x
+    coordinates[coordinates[0::1, 0] >= gridSize, 0] = coordinates[coordinates[0::1, 0] >= gridSize, 0] - gridSize # x
     coordinates[coordinates[0::1, 0] < 0, 0] = coordinates[coordinates[0::1, 0] < 0, 0] + gridSize               # x
-    coordinates[coordinates[0::1, 1] > gridSize, 1] = coordinates[coordinates[0::1, 1] > gridSize, 1] - gridSize # y
+    coordinates[coordinates[0::1, 1] >= gridSize, 1] = coordinates[coordinates[0::1, 1] >= gridSize, 1] - gridSize # y
     coordinates[coordinates[0::1, 1] < 0, 1] = coordinates[coordinates[0::1, 1] < 0, 1] + gridSize               # y
     return coordinates
 

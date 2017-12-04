@@ -7,7 +7,7 @@ import random
 
 class Animal(abc.ABC):
     def __init__(self, latticeLength, x=None, y=None, visibilityRadius=2,
-                 reproductionRate=0.005, child=False):
+                 reproductionRate=0.001, child=False):
         self.child = child
         self._latticeLength = latticeLength
         self._visibilityRadius = visibilityRadius
@@ -77,6 +77,48 @@ class Animal(abc.ABC):
             self.y += b
 
 
+    def stepAway(self, targetCoord):
+        def choise(difference, sizeGrid):
+            if difference == 0:
+                return 0
+            if abs(difference) < sizeGrid/2:
+                return np.sign(difference)
+            elif abs(difference) > sizeGrid/2:
+                return -1*np.sign(difference)
+            else:
+                q = rand()
+                if q < 0.5:
+                    return 1
+                else:
+                    return -1
+
+        xCoord = self.x
+        yCoord = self.y
+
+        # Check if to go right/left and up/down
+        diffX = targetCoord[0]-xCoord
+        diffY = targetCoord[1]-yCoord
+
+        choices = [False, False]
+        sizeGrid = self._latticeLength
+        a = choise(diffX, sizeGrid)
+        if a != 0:
+            choices[0] = True
+        b = choise(diffY, sizeGrid)
+        if b != 0:
+            choices[1] = True
+
+        if sum(choices) == 0:
+            return
+        result = randint(sum(choices))
+        if result == 1:
+            self.y -= b
+        elif choices[0]:
+            self.x -= a
+        else:
+            self.y -= b
+
+
 
     @property
     def x(self):
@@ -97,8 +139,8 @@ class Animal(abc.ABC):
     def _random_walk(self):
 
         r = rand()
-        if r < 0.2:
-            self.previousStep=np.random.randint(1,4,1)
+        if r < self.randomTurnProbability: # Checks if the agent should change direction.
+            self.previousStep = np.random.randint(1, 5, 1)
 
         if self.previousStep == 1:
             self.x = self.x - 1
@@ -115,18 +157,56 @@ class Animal(abc.ABC):
         #1. Get position of the prey
         tmpVar = [self.x, self.y]
         #2. Get the visibility sphere
-        visSquare = list(self.visibility())
+        #if kindOfTarget == 'prey':
+        #    visSquare = list(self.visibility())
+            #------------------------------------------
         #3. Look around if anyone is nearby
-        for object in objects:
-            cord = (object.x, object.y)
-            if cord in visSquare:
-                possibleFollowList.append(cord)
-        if(kindOfTarget=='prey'):
-            possibleFollowList.remove((self.x, self.y))
+
+        #if kindOfTarget == 'plant':
+            # ------------------------------------------
+            #plantList = np.zeros((np.size(objects), 1))
+        possibleFollowList = []
+        for i in range(0, np.size(objects), 1):
+            # Noticably faster than using the visibility sphere
+            diffX = abs(objects[i].x - self.x)
+            diffY = abs(objects[i].y - self.y)
+            if diffX > self._latticeLength / 2:
+                diffX = self._latticeLength - diffX
+            if diffY > self._latticeLength / 2:
+                diffY = self._latticeLength - diffY
+            if diffX+diffY < self._visibilityRadius and diffX+diffY > 0:
+                possibleFollowList.append([objects[i].x,objects[i].y])
+            #------------------------------------------
+
         toFollow = None
-        if possibleFollowList:
-            toFollow = random.choice(possibleFollowList)
+        if(kindOfTarget=='prey') or (kindOfTarget == 'predator'):
+            #possibleFollowList.remove((self.x, self.y))
+            if possibleFollowList:
+
+                distanceList = np.zeros((len(possibleFollowList), 1))
+                for i in range(0,len(possibleFollowList),1):
+                    diffX = abs(possibleFollowList[i][0] - self.x)
+                    diffY = abs(possibleFollowList[i][1] - self.y)
+                    if diffX > self._latticeLength / 2:
+                        diffX = self._latticeLength - diffX
+                    if diffY > self._latticeLength / 2:
+                        diffY = self._latticeLength - diffY
+                    distanceList[i, 0] = diffX + diffY
+                # Finds the order of the preys (according to proximity to the searching prey)
+                preySortedIndeces = np.argsort(distanceList, kind='quicksort', axis=0)
+                if kindOfTarget == 'prey':
+                    toFollow = possibleFollowList[preySortedIndeces[-1,0]] # Pick prey furthest away.
+                else:
+                    toFollow = possibleFollowList[preySortedIndeces[0, 0]]  # Pick prey closest.
+                #toFollow = random.choice(possibleFollowList)  # Pick random prey.
+        elif(kindOfTarget=='plant'):
+            if possibleFollowList:
+                toFollow = random.choice(possibleFollowList) # Pick random plant.
         return toFollow
+        #if len(possibleFollowList) == 0: # If there are no other prey nearby
+        #		prey.randomWalk or whatever. This shouldnot be implemented here
+
+
 
     @abc.abstractmethod
     def _look(self):
@@ -158,10 +238,8 @@ class Animal(abc.ABC):
             self._reproduce()
             self._die()
 
-    def update_pointers(self, preys, predators, plants= None, plantClusters = None):
+    def update_pointers(self, preys, predators, plants=[], plantClusters=[]):
         self.preys = preys
         self.predators = predators
         self.plants = plants
         self.plantClusters = plantClusters
-
-

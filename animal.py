@@ -7,7 +7,7 @@ import random
 
 class Animal(abc.ABC):
     def __init__(self, latticeLength, x=None, y=None, visibilityRadius=2,
-                 reproductionRate=0.001, child=False):
+                 reproductionRate=0.005, child=False):
         self.child = child
         self._latticeLength = latticeLength
         self._visibilityRadius = visibilityRadius
@@ -109,6 +109,12 @@ class Animal(abc.ABC):
             choices[1] = True
 
         if sum(choices) == 0:
+            r = rand()
+            q = rand() - 0.5
+            if r < 0.5:
+                self.x = self.x + np.sign(q)
+            else:
+                self.y = self.y + np.sign(q)
             return
         result = randint(sum(choices))
         if result == 1:

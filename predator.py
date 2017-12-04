@@ -7,7 +7,7 @@ class Predator(Animal):
     maxHunger = 200  # The maximum amount of food the predator can store.
 
     # Example of using a parent's constructor
-    def __init__(self, nLatticeLength, x=None, y=None, visibilityRadius=14, child=False, randomTurnProbability=0.4):
+    def __init__(self, nLatticeLength, x=None, y=None, visibilityRadius=14, child=False, randomTurnProbability=0.3):
         super().__init__(nLatticeLength, x, y, visibilityRadius, child=child)
         self.life = 4000
         self.randomTurnProbability = randomTurnProbability
@@ -31,7 +31,8 @@ class Predator(Animal):
         if xCoords == target[0] and yCoords == target[1]:
             for prey in self.preys:
                 if prey.x == target[0] and prey.y == target[1]:
-                    prey._die(killed = True)
+                    #prey._die(killed = True)
+                    self.preys.remove(prey) # kills the prey, this is used instead of the modified _die() function since that caused a rare run time error.
                     self.hunger = self.maxHunger
 
 

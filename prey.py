@@ -1,9 +1,8 @@
 import animal
 import predator
-import plant_module
+from plant_module import PlantCluster
 from numpy.random import rand
 import numpy as np
-from plant_module import Plant
 
 
 class Prey(animal.Animal):
@@ -19,10 +18,16 @@ class Prey(animal.Animal):
     def _predator_found(self, x, y):
         return self._follow(x, y, predator.Predator.grid)
 
+    def _plant_found(self, x, y):
+        return self._follow(x, y, PlantCluster.grid)
+
     def _walk(self, x, y):
         predatorCoordinates = self._predator_found(x, y)
         if predatorCoordinates:
             return self._step(x, y, predatorCoordinates, reverse=True)
+        plantCoordinates = self._plant_found(x, y)
+        if plantCoordinates:
+            return self._step(x, y, plantCoordinates)
         r = rand()
         if r < self._followHerdProbability:
             coordinates = self._follow(x, y, Prey.grid, reverse=True)
@@ -31,11 +36,11 @@ class Prey(animal.Animal):
         return self._random_walk(x, y)
 
     def _eat(self, x, y):
-        plant = plant_module.PlantCluster.grid[y][x]
+        plant = PlantCluster.grid[y][x]
         if plant:
             self.hunger += plant.foodValue 
             if plant.eaten():
-                plant_module.PlantCluster.grid[y][x] = None
+                PlantCluster.grid[y][x] = None
             if self.hunger > Prey.maxHunger:
                 self.hunger = Prey.maxHunger
 

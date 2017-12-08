@@ -57,7 +57,7 @@ class PlantCluster:
         if self.plants > 0:
             self.plants -= 1
         if self.plants == 0:
-            PlantCluster.list.delete(self)
+            PlantCluster.list.remove(self)
 
     @property
     def x(self):

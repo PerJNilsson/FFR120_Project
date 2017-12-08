@@ -7,17 +7,20 @@ import numpy as np
 nLatticeLength = 200
 
 
-def update_plant_handle(plantHandle, clusterHandle):
+def update_plant_handle(plantHandle, clusterHandle, plotPlants=True):
     # Since we don't have a list of plants we need to find them all the grid.
     # Alternatively, we implement list just for plotting.
-    xPlant = []
-    yPlant = []
-    for i in range(nLatticeLength):
-        for j in range(nLatticeLength):
-            if PlantCluster.grid[i][j]:
-                yPlant.append(i)
-                xPlant.append(j)
-    plantHandle.set_data(xPlant, yPlant)
+    if plotPlants:
+        xPlant = []
+        yPlant = []
+        for i in range(nLatticeLength):
+            for j in range(nLatticeLength):
+                if PlantCluster.grid[i][j]:
+                    yPlant.append(i)
+                    xPlant.append(j)
+        plantHandle.set_data(xPlant, yPlant)
+    else:
+        plantHandle.set_data([], [])
 
     numberOfClusters = len(PlantCluster.list)
     xCluster = np.zeros(numberOfClusters)
@@ -30,11 +33,11 @@ def update_plant_handle(plantHandle, clusterHandle):
 
 
 def main():
-    Prey.initialize(nLatticeLength, life=10000, maxHunger=10000)
-    Predator.initialize(maxHunger=155)
+    Prey.initialize(nLatticeLength)
+    Predator.initialize()
     PlantCluster.initialize(nLatticeLength)
-    [Prey() for i in range(200)]
-    [Predator() for i in range(200)]
+    [Prey() for i in range(800)]
+    [Predator() for i in range(100)]
     [PlantCluster() for i in range(4)]
     plt.ioff()
     plt.show()

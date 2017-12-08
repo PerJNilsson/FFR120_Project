@@ -1,11 +1,11 @@
-from animal import Animal
+import animal
+import predator
 from numpy.random import rand
-import random
 import numpy as np
 from plant_module import Plant
 
 
-class Prey(Animal):
+class Prey(animal.Animal):
 
     def __init__(self, x=None, y=None,
                  followHerdProbability=0.2, visibilityRadius=10, child=False):
@@ -15,36 +15,31 @@ class Prey(Animal):
         self.iterationsMovingToFood = 0
         self.previousStep = np.random.randint(1, 4, 1)
 
-    # def _look(self):
-        # pass
-        # self.LookForPredator()
-
-        # self.LookForPlant()
-
-        # self.LookForPrey()
+    def _predator_found(self, x, y):
+        return self._follow(x, y, predator.Predator.grid)
 
     def _walk(self, x, y):
-        # if self.plantToFollow:
-        #     self.step(self.plantToFollow)
-        # else:
-
+        predatorCoordinates = self._predator_found(x, y)
+        if predatorCoordinates:
+            return self._step(x, y, predatorCoordinates, reverse=True)
         r = rand()
         if r < self._followHerdProbability:
-            coordinates = self._follow(x, y, Prey.grid)
+            coordinates = self._follow(x, y, Prey.grid, reverse=True)
             if coordinates:
                 return self._step(x, y, coordinates)
         return self._random_walk(x, y)
 
     def _eat(self, x, y):
+        pass
         #  Checks if the food has been reached.
-        if Plant.grid[x][y]:
-            self.hunger += plantObject.foodValue  # The prey consumes the plant
-            plantObject.PlantGetsEaten()  # The plant is consumed
-            break
-            self.iterationsMovingToFood = 0
-            self.plantToFollow = []
-            if self.hunger > Prey.maxHunger:
-                self.hunger = Prey.maxHunger
+        # if Plant.grid[x][y]:
+        #     self.hunger += plantObject.foodValue  # The prey consumes the plant
+        #     plantObject.PlantGetsEaten()  # The plant is consumed
+        #     break
+        #     self.iterationsMovingToFood = 0
+        #     self.plantToFollow = []
+        #     if self.hunger > Prey.maxHunger:
+        #         self.hunger = Prey.maxHunger
 
     def _create_child(self, x, y):
         return Prey(x, y, self._followHerdProbability, self._visibilityRadius,

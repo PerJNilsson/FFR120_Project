@@ -22,7 +22,7 @@ def main():
         plt.title("Prey = {}, Predators = {}".format(Prey.population,
                                                      Predator.population))
         plt.draw()
-        plt.pause(0.0001)
+        plt.pause(0.001)
 
 
 if __name__ == "__main__":

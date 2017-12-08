@@ -41,13 +41,28 @@ class Animal(abc.ABC):
 
     def _visibility(self, x, y):
         radius = self._visibilityRadius
-        xList = [utility.periodic(x + i, Animal._latticeLength) for i in
-                 range(-radius, radius)]
-        yList = [utility.periodic(y + i, Animal._latticeLength) for i in
-                 range(-radius, radius)]
-        return itertools.product(xList, yList)
+        coordinates = []
+        for i in range(1, radius):
+            for j in range(0, i):
+                diff = j - i
+                xTemp = utility.periodic(x + j, Animal._latticeLength)
+                yTemp = utility.periodic(y + diff, Animal._latticeLength)
+                coordinates.append((xTemp, yTemp))
 
-    def _step(self, x, y, targetCoord):
+                xTemp = utility.periodic(x + j, Animal._latticeLength)
+                yTemp = utility.periodic(y - diff, Animal._latticeLength)
+                coordinates.append((xTemp, yTemp))
+
+                xTemp = utility.periodic(x - j, Animal._latticeLength)
+                yTemp = utility.periodic(y + diff, Animal._latticeLength)
+                coordinates.append((xTemp, yTemp))
+
+                xTemp = utility.periodic(x - j, Animal._latticeLength)
+                yTemp = utility.periodic(y - diff, Animal._latticeLength)
+                coordinates.append((xTemp, yTemp))
+        return coordinates
+
+    def _step(self, x, y, targetCoord, reverse=False):
         def choice(difference, sizeGrid):
             if difference == 0:
                 return 0
@@ -78,28 +93,30 @@ class Animal(abc.ABC):
             return (x, y)
         result = randint(sum(choices))
         if result == 1:
-            y += b
+            if reverse:
+                y -= b
+            else:
+                y += b
         elif choices[0]:
-            x += a
+            if reverse:
+                x -= a
+            else:
+                x += a
         else:
-            y += b
+            if reverse:
+                y -= b
+            else:
+                y += b
         return (x, y)
 
-    def _follow(self, x, y, objects):
-        possibleFollowList = []
-        #  Get the visibility sphere
-        visSquare = list(self._visibility(x, y))
-        #  Look around if anyone is nearby
-        for xCo, yCo in visSquare:
-            if xCo == x and yCo == y:
-                continue
+    def _follow(self, x, y, objects, reverse=False):
+        visibility = self._visibility(x, y)
+        if reverse:
+            visibility = np.flipud(visibility)
+        for xCo, yCo in visibility:
             if objects[yCo][xCo]:
-                possibleFollowList.append((xCo, yCo))
-
-        toFollow = None
-        if possibleFollowList:
-            toFollow = random.choice(possibleFollowList)
-        return toFollow
+                return xCo, yCo
+        return None
 
     def _random_walk(self, x, y):
         xTemp = x

@@ -45,43 +45,43 @@ class Prey(animal.Animal):
         return Prey(x, y, self._followHerdProbability, self._visibilityRadius,
                     child=True)
 
-    def LookForPlant(self):
-        if np.size(self.plantToFollow) == 2:
-            self.iterationsMovingToFood += 1
+    # def LookForPlant(self):
+    #    if np.size(self.plantToFollow) == 2:
+    #        self.iterationsMovingToFood += 1
 
-        if (np.size(self.plantToFollow) == 0 or self.iterationsMovingToFood > 30) and self.hunger < 90:
-            # The prey will look for new food if it has not yet seen any food or if it has been moving towards the same
-            # food for a long time. A new target is choosen to avoid preys getting stuck trying to eat food which has
-            # already been eaten. The prey do not look for food if it's hunger bar is almost full.
+    #    if (np.size(self.plantToFollow) == 0 or self.iterationsMovingToFood > 30) and self.hunger < 90:
+    #        # The prey will look for new food if it has not yet seen any food or if it has been moving towards the same
+    #        # food for a long time. A new target is choosen to avoid preys getting stuck trying to eat food which has
+    #        # already been eaten. The prey do not look for food if it's hunger bar is almost full.
 
-            # Looks at one cluster at a time. Should be faster (might be optimized further).
-            clusterList = np.zeros(
-                (self.plantClusters[0].numberOfPlantClusters, 1))
-            for i in range(0, self.plantClusters[0].numberOfPlantClusters, 1):
-                diffX = abs(self.plantClusters[i].x - self.x)
-                diffY = abs(self.plantClusters[i].y - self.y)
-                if diffX > self._latticeLength / 2:
-                    diffX = self._latticeLength - diffX
-                if diffY > self._latticeLength / 2:
-                    diffY = self._latticeLength - diffY
-                clusterList[i, 0] = diffX + diffY
-            # Finds the order of the clusters (according to proximity to prey)
-            clusterSortedIndeces = np.argsort(
-                clusterList, kind='quicksort', axis=0)
-            for i in range(0, self.plantClusters[0].numberOfPlantClusters, 1):
-                j = clusterSortedIndeces[i]
-                tmpList = []
-                currentClusterID = self.plantClusters[j[0]].ID
-                for plantObject in self.plants:
-                    if(plantObject.clusterID == currentClusterID):
-                        tmpList.append(plantObject)
-                    else:
-                        if (plantObject.clusterID > currentClusterID):
-                            break
-                self.plantToFollow = self.follow(tmpList, 'plant')
-                if self.plantToFollow:
-                    break
+    #        # Looks at one cluster at a time. Should be faster (might be optimized further).
+    #        clusterList = np.zeros(
+    #            (self.plantClusters[0].numberOfPlantClusters, 1))
+    #        for i in range(0, self.plantClusters[0].numberOfPlantClusters, 1):
+    #            diffX = abs(self.plantClusters[i].x - self.x)
+    #            diffY = abs(self.plantClusters[i].y - self.y)
+    #            if diffX > self._latticeLength / 2:
+    #                diffX = self._latticeLength - diffX
+    #            if diffY > self._latticeLength / 2:
+    #                diffY = self._latticeLength - diffY
+    #            clusterList[i, 0] = diffX + diffY
+    #        # Finds the order of the clusters (according to proximity to prey)
+    #        clusterSortedIndeces = np.argsort(
+    #            clusterList, kind='quicksort', axis=0)
+    #        for i in range(0, self.plantClusters[0].numberOfPlantClusters, 1):
+    #            j = clusterSortedIndeces[i]
+    #            tmpList = []
+    #            currentClusterID = self.plantClusters[j[0]].ID
+    #            for plantObject in self.plants:
+    #                if(plantObject.clusterID == currentClusterID):
+    #                    tmpList.append(plantObject)
+    #                else:
+    #                    if (plantObject.clusterID > currentClusterID):
+    #                        break
+    #            self.plantToFollow = self.follow(tmpList, 'plant')
+    #            if self.plantToFollow:
+    #                break
 
-            # Looks at all plants at a time.
-            #self.plantToFollow = self.follow(self.plants, 'plant')
-            self.iterationsMovingToFood = 0
+    #        # Looks at all plants at a time.
+    #        #self.plantToFollow = self.follow(self.plants, 'plant')
+    #        self.iterationsMovingToFood = 0

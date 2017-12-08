@@ -1,10 +1,8 @@
 from collections import deque
 from numpy.random import randint, rand
-import itertools
 import utility
 import abc
 import numpy as np
-import random
 
 
 class Animal(abc.ABC):
@@ -43,19 +41,21 @@ class Animal(abc.ABC):
         radius = self._visibilityRadius
         coordinates = []
         for i in range(1, radius):
-            for j in range(0, i):
+            for j in range(0, i+1):
                 diff = j - i
-                xTemp = utility.periodic(x + j, Animal._latticeLength)
-                yTemp = utility.periodic(y + diff, Animal._latticeLength)
-                coordinates.append((xTemp, yTemp))
-
-                xTemp = utility.periodic(x + j, Animal._latticeLength)
-                yTemp = utility.periodic(y - diff, Animal._latticeLength)
-                coordinates.append((xTemp, yTemp))
+                if j != 0:
+                    xTemp = utility.periodic(x + j, Animal._latticeLength)
+                    yTemp = utility.periodic(y + diff, Animal._latticeLength)
+                    coordinates.append((xTemp, yTemp))
 
                 xTemp = utility.periodic(x - j, Animal._latticeLength)
                 yTemp = utility.periodic(y + diff, Animal._latticeLength)
                 coordinates.append((xTemp, yTemp))
+
+                if diff != 0:
+                    xTemp = utility.periodic(x + j, Animal._latticeLength)
+                    yTemp = utility.periodic(y - diff, Animal._latticeLength)
+                    coordinates.append((xTemp, yTemp))
 
                 xTemp = utility.periodic(x - j, Animal._latticeLength)
                 yTemp = utility.periodic(y - diff, Animal._latticeLength)

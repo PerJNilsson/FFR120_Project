@@ -5,6 +5,7 @@ import numpy as np
 
 class Predator(animal.Animal):
     hungerBeforeChase = 150
+
     def __init__(self, x=None, y=None, visibilityRadius=8, child=False):
         super().__init__(x, y, visibilityRadius, child=child)
         self.iterationsMovingToFood = 0

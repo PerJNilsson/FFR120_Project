@@ -1,5 +1,6 @@
 from prey import Prey
 from predator import Predator
+from plant_module import PlantCluster
 import matplotlib.pyplot as plt
 
 
@@ -7,8 +8,11 @@ def main():
     nLatticeLength = 200
     Prey.initialize(nLatticeLength, life=10000, maxHunger=10000)
     Predator.initialize(maxHunger=155)
-    [Prey() for i in range(200)]
-    [Predator() for i in range(80)]
+    PlantCluster.initialize(nLatticeLength)
+    [Prey() for i in range(300)]
+    [Predator() for i in range(200)]
+    PlantCluster.iterate()
+
     plt.ioff()
     plt.show()
     plt.axis([-1, nLatticeLength, -1, nLatticeLength])

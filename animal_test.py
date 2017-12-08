@@ -42,8 +42,8 @@ def main():
     plt.ioff()
     plt.show()
     plt.axis([-1, nLatticeLength, -1, nLatticeLength])
-    predatorsHandle, = plt.plot([], [],  'or')
-    preyHandle, = plt.plot([], [],  'ob')
+    preyHandle, = plt.plot([], [], '.', markersize = 3 , color = (0.2, 0.3, 0.8))
+    predatorsHandle, = plt.plot([], [],  '.', markersize = 5 , color = (0.9, 0.1, 0.1))
     plantHandle, = plt.plot([], [], '.', markersize=2, color=(0.3, 0.9, 0.1))
     clusterHandle, = plt.plot([], [], 'o', markersize=10, color=(0.3, 0.5, 0.7), alpha=0.5)
     for i in range(5000):

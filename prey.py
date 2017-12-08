@@ -1,5 +1,6 @@
 import animal
 import predator
+import plant_module
 from numpy.random import rand
 import numpy as np
 from plant_module import Plant
@@ -30,16 +31,13 @@ class Prey(animal.Animal):
         return self._random_walk(x, y)
 
     def _eat(self, x, y):
-        pass
-        #  Checks if the food has been reached.
-        # if Plant.grid[x][y]:
-        #     self.hunger += plantObject.foodValue  # The prey consumes the plant
-        #     plantObject.PlantGetsEaten()  # The plant is consumed
-        #     break
-        #     self.iterationsMovingToFood = 0
-        #     self.plantToFollow = []
-        #     if self.hunger > Prey.maxHunger:
-        #         self.hunger = Prey.maxHunger
+        plant = plant_module.PlantCluster.grid[y][x]
+        if plant:
+            self.hunger += plant.foodValue 
+            if plant.eaten():
+                plant_module.PlantCluster.grid[y][x] = None
+            if self.hunger > Prey.maxHunger:
+                self.hunger = Prey.maxHunger
 
     def _create_child(self, x, y):
         return Prey(x, y, self._followHerdProbability, self._visibilityRadius,

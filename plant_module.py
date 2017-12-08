@@ -1,12 +1,14 @@
 import numpy as np
 from numpy.random import randint
 
+
 class Plant:
     maxNumberOfCharges = 10
 
-    def __init__(self, cluster):
-        self.charges = maxNumberOfCharges
+    def __init__(self, cluster, foodValue=40):
+        self.charges = Plant.maxNumberOfCharges
         self.cluster = cluster
+        self.foodValue = foodValue
 
     def eaten(self):
         if self.charges > 0:
@@ -28,25 +30,28 @@ class PlantCluster:
         if latticeLength:
             PlantCluster._latticeLength = latticeLength
         PlantCluster.grid = [[None for i in range(PlantCluster._latticeLength)]
-                              for j in range(PlantCluster._latticeLength)]
+                             for j in range(PlantCluster._latticeLength)]
         PlantCluster.list = []
 
     def __init__(self):
+        self.plants = 0
+        gridSize = PlantCluster._latticeLength
         if PlantCluster.distributionParameter == 1 or not PlantCluster.list:
-            self.coordinates = numpy.random.randint(0, gridSize,2)
-            return
+            self.coordinates = np.random.randint(0, gridSize,2)
+        else:
+            candidateCoordinates = randint(0, gridSize, (PlantCluster.distributionParameter, 2))
+            distanceToClosestCluster = np.zeros(PlantCluster.distributionParameter)
+            numberOfClusters = len(PlantCluster.list)
+            for i, currentCandidateCoordinates in enumerate(candidateCoordinates):
+                distanceToExistingClusters = np.zeros((numberOfClusters, 1))
+                for j, cluster in enumerate(PlantCluster.list):
+                    distanceToExistingClusters[j] = np.linalg.norm(currentCandidateCoordinates - cluster.coordinates)
+                distanceToClosestCluster[i] = distanceToExistingClusters.min()
 
-        candidateCoordinates = randint(0, gridSize, (PlantCluster.distributionParameter, 2))
-        distanceToClosestCluster = numpy.zeros(PlantCluster.distributionParameter)
-        for i, currentCandidateCoordinates in enumerate(candidateCoordinates):
-            distanceToExistingClusters = numpy.zeros((numberOfClusters, 1))
-            for j, cluster in enumerate(PlantCluster.list):
-                distanceToExistingClusters[j] = np.linalg.norm(currentCandidateCoordinates - cluster.coordinates)
-            distanceToClosestCluster[i] = distanceToExistingClusters.min()
-
-        idxOfFurthestCluster = distanceToClosestCluster.argmax()
-        self.coordinates = candidateCoordinates[idxOfFurthestCluster]
+            idxOfFurthestCluster = distanceToClosestCluster.argmax()
+            self.coordinates = candidateCoordinates[idxOfFurthestCluster]
         self.grow()
+        PlantCluster.list.append(self)
 
     def decrement(self):
         if self.plants > 0:
@@ -54,15 +59,25 @@ class PlantCluster:
         if self.plants == 0:
             PlantCluster.list.delete(self)
 
+    @property
+    def x(self):
+        return self.coordinates[0]
+
+    @property
+    def y(self):
+        return self.coordinates[1]
+
     def grow(self):
-        candidateXCoordinates = np.round(np.random.normal(clusterObject.x, standardDeviation, [PlantCluster.size, 1]))
-        candidateYCoordinates = np.round(np.random.normal(clusterObject.y, standardDeviation, [PlantCluster.size, 1]))
+        x = self.x
+        y = self.y
+        candidateXCoordinates = np.round(np.random.normal(x, PlantCluster.standardDeviation, [PlantCluster.size, 1]))
+        candidateYCoordinates = np.round(np.random.normal(y, PlantCluster.standardDeviation, [PlantCluster.size, 1]))
         candidateCoordinates = np.hstack((candidateXCoordinates, candidateYCoordinates))
         candidateCoordinates = PlantCluster.apply_boundary_conditions(candidateCoordinates)
         # uniqueCandidateCoordinates = np.unique(candidateCoordinates, axis=0)
-        for coordinates in uniqueCandidateCoordinates:
-            if not PlantCluster.grid[coordinates[0]][coordinates[1]]: 
-                PlantCluster.grid[coordinates[0]][coordinates[1]] = Plant(self)
+        for coordinates in candidateCoordinates:
+            if not PlantCluster.grid[y][x]: 
+                PlantCluster.grid[y][x] = Plant(self)
                 self.plants += 1
 
     def iterate():

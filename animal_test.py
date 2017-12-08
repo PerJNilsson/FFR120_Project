@@ -33,8 +33,8 @@ def main():
     Prey.initialize(nLatticeLength, life=10000, maxHunger=10000)
     Predator.initialize(maxHunger=155)
     PlantCluster.initialize(nLatticeLength)
-    [Prey() for i in range(0)]
-    [Predator() for i in range(0)]
+    [Prey() for i in range(200)]
+    [Predator() for i in range(200)]
     [PlantCluster() for i in range(4)]
     plt.ioff()
     plt.show()

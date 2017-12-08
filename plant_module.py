@@ -1,4 +1,5 @@
 import numpy as np
+from utility import periodic
 from numpy.random import randint
 
 
@@ -68,14 +69,15 @@ class PlantCluster:
         return self.coordinates[1]
 
     def grow(self):
-        x = self.x
-        y = self.y
-        candidateXCoordinates = np.round(np.random.normal(x, PlantCluster.standardDeviation, [PlantCluster.size, 1]))
-        candidateYCoordinates = np.round(np.random.normal(y, PlantCluster.standardDeviation, [PlantCluster.size, 1]))
+        candidateXCoordinates = np.round(np.random.normal(self.x, PlantCluster.standardDeviation, [PlantCluster.size, 1]))
+        candidateYCoordinates = np.round(np.random.normal(self.y, PlantCluster.standardDeviation, [PlantCluster.size, 1]))
         candidateCoordinates = np.hstack((candidateXCoordinates, candidateYCoordinates))
-        candidateCoordinates = PlantCluster.apply_boundary_conditions(candidateCoordinates)
+        # candidateCoordinates = PlantCluster.apply_boundary_conditions(candidateCoordinates)
         # uniqueCandidateCoordinates = np.unique(candidateCoordinates, axis=0)
         for coordinates in candidateCoordinates:
+            x, y = coordinates
+            x = periodic(int(x), PlantCluster._latticeLength)
+            y = periodic(int(y), PlantCluster._latticeLength)
             if not PlantCluster.grid[y][x]: 
                 PlantCluster.grid[y][x] = Plant(self)
                 self.plants += 1
@@ -84,15 +86,5 @@ class PlantCluster:
         r = np.random.rand()
         if r < PlantCluster.spawnRate:
             PlantCluster.list.append(PlantCluster())
-        for plantCluster in PlantCluster.list:
-            plantCluster.grow()
-
-    def apply_boundary_conditions(coordinates):
-        gridSize = PlantCluster._latticeLength
-        coordinates[coordinates[0::1, 0] >= gridSize, 0] = coordinates[coordinates[0::1, 0] >= gridSize, 0] - gridSize
-        coordinates[coordinates[0::1, 0] < 0, 0] = coordinates[coordinates[0::1, 0] < 0, 0] + gridSize
-        coordinates[coordinates[0::1, 1] >= gridSize, 1] = coordinates[coordinates[0::1, 1] >= gridSize, 1]
-        coordinates[coordinates[0::1, 1] < 0, 1] = coordinates[coordinates[0::1, 1] < 0, 1] + gridSize
-        return coordinates
-
-
+        # for plantCluster in PlantCluster.list:
+        #     plantCluster.grow()

@@ -4,7 +4,7 @@ from plant_module import PlantCluster
 import matplotlib.pyplot as plt
 import numpy as np
 
-nLatticeLength = 200
+nLatticeLength = 500
 
 
 def update_plant_handle(plantHandle, clusterHandle, plotPlants=True):
@@ -46,6 +46,7 @@ def main():
     predatorsHandle, = plt.plot([], [],  '.', markersize = 5 , color = (0.9, 0.1, 0.1))
     plantHandle, = plt.plot([], [], '.', markersize=2, color=(0.3, 0.9, 0.1))
     clusterHandle, = plt.plot([], [], 'o', markersize=10, color=(0.3, 0.5, 0.7), alpha=0.5)
+
     for i in range(5000):
         PlantCluster.iterate()
         Prey.iterate()
@@ -56,7 +57,7 @@ def main():
         plt.title("Prey = {}, Predators = {}".format(Prey.population,
                                                      Predator.population))
         plt.draw()
-        plt.pause(0.001)
+        plt.pause(0.00001)
 
 
 if __name__ == "__main__":

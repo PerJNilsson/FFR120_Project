@@ -93,7 +93,11 @@ def main():
     #    predator.update_pointers(preys, predators)
 
     i=0
-    while preys:
+    number_of_preys = []
+    number_of_predators = []
+    number_of_preys.append(np.size(preys))
+    number_of_predators.append(np.size(predators))
+    while i < 5000:
         i+=1
         clusterObjects, plantObjects = plant_module.PlantGrowth(clusterObjects, plantObjects, gridSize,
                                                                 clusterSpawnRate,
@@ -129,6 +133,15 @@ def main():
         if i%1 == 0:
             plot(preys, predators, plantObjects, clusterObjects, preyPlotHandle, plantPlotHandle, clusterPlotHandle,
                  predatorsPlotHandle)
+
+        number_of_preys.append(np.size(preys))
+        number_of_predators.append(np.size(predators))
+
+    plt.figure(2)
+    plt.plot(range(0, i + 1), number_of_preys, 'b')
+    plt.plot(range(0,i+1), number_of_predators, 'r')
+
+    plt.show()
 
     print("i = %i\n# of preys = %i\n# of plants = %i\n# of predators = %i" % (
         i, np.size(preys), np.size(plantObjects), np.size(predators)))

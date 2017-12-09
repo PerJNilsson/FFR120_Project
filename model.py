@@ -59,15 +59,15 @@ def main():
     '''
 
 
-    initialNumberOfPreys = 150
+    initialNumberOfPreys = 200
     initialNumberOfPredators = 5
     initialNumberOfClusters = 3
     gridSize = 150
-    clusterSpawnRate = 0.001  # The probability of generating a new cluster for each generation
+    clusterSpawnRate = 0.005  # The probability of generating a new cluster for each generation
     clusterDistributionParameter = 20  # A higher value will tend to create the clusters more evenly spread.
     # In the limit that the parameter is 1 the clusters will spawn completely random.
-    clusterSizeParameter = 350  # The amount of plants per cluster (SHOULD THIS BE THE UPPER LIMIT OR MEAN?!?!?!?!?!)
-    clusterStandardDeviation = 10  # The standard deviation used to generate the plants which make up the cluster.
+    clusterSizeParameter = 100  # The amount of plants per cluster (SHOULD THIS BE THE UPPER LIMIT OR MEAN?!?!?!?!?!)
+    clusterStandardDeviation = 8  # The standard deviation used to generate the plants which make up the cluster.
 
 
     # Initializes "graphics"
@@ -85,14 +85,15 @@ def main():
     print(clusterStandardDeviation * math.sqrt(-2 * math.log(0.001 * clusterStandardDeviation * math.sqrt(2 * math.pi)))+40)
 
     preys = [Prey(gridSize) for i in range(initialNumberOfPreys)]
-    predators = [Predator(gridSize) for j in range(initialNumberOfPredators)]
+    #predators = [Predator(gridSize) for j in range(initialNumberOfPredators)]
+    predators = []
     for prey in preys:
         prey.update_pointers(preys, predators, plantObjects, clusterObjects)
-    for predator in predators:
-        predator.update_pointers(preys, predators)
+    #for predator in predators:
+    #    predator.update_pointers(preys, predators)
 
     i=0
-    while True:
+    while preys:
         i+=1
         clusterObjects, plantObjects = plant_module.PlantGrowth(clusterObjects, plantObjects, gridSize,
                                                                 clusterSpawnRate,
@@ -102,12 +103,20 @@ def main():
         if np.size(clusterObjects)==1:
             plantObjects[0].UpdatePointers(plantObjects, clusterObjects)  # Needed when new plants grow when before there
             for prey in preys:                                            # were no plants. Without this code the preys
-                prey.update_pointers(preys, plantObjects, clusterObjects) # seem to lose track of the plants
+                prey.update_pointers(preys, predators, plantObjects, clusterObjects) # seem to lose track of the plants
 
         for prey in preys:
             prey()
         for predator in predators:
             predator()
+
+        if i == 500:
+            predators = [Predator(gridSize) for j in range(initialNumberOfPredators)]
+            for prey in preys:
+                prey.update_pointers(preys, predators, plantObjects, clusterObjects)
+            for predator in predators:
+                predator.update_pointers(preys, predators)
+
         if i%100 == 0:
             print("i = %i\n# of preys = %i\n# of plants = %i\n# of predators = %i" %(i,np.size(preys),np.size(plantObjects),np.size(predators)))
             #r = np.random.randint(0, gridSize,2)
@@ -119,7 +128,10 @@ def main():
             plot(preys, predators, plantObjects, clusterObjects, preyPlotHandle, plantPlotHandle, clusterPlotHandle,
                  predatorsPlotHandle)
 
-
+    print("i = %i\n# of preys = %i\n# of plants = %i\n# of predators = %i" % (
+        i, np.size(preys), np.size(plantObjects), np.size(predators)))
+    plot(preys, predators, plantObjects, clusterObjects, preyPlotHandle, plantPlotHandle, clusterPlotHandle,
+         predatorsPlotHandle)
 
     # prey1 = Prey(90, 1, 1,followHerdProbability=0)
     # prey2 = Prey(90, 88, 3, followHerdProbability=0.5, visibilityRadius=6)

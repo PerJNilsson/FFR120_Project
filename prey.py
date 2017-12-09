@@ -9,44 +9,43 @@ class Prey(Animal):
     maxHunger = 400# The maximum amount of food the prey can store.
     maxRestTime = 20 # The amount of turns a prey have to rest after having eaten a plant.
     maxExplorationTime = 200
+    maxFleeTime = 40
 
     # Example of using a parent's constructor
     def __init__(self, nLatticeLength, x=None, y=None,
-                 followHerdProbability=0.4, breakFromHerdProbability=0.5, randomTurnProbability=0.4,
-                 probabilityOfExploration = 1, visibilityRadius=15, child=False):
+                 followHerdProbability=0.4, breakFromHerdProbability=0.9, randomTurnProbability=0.4,
+                 probabilityOfExploration = 1, probabilityOfDetectingPredator = 0.5, visibilityRadius=16, child=False):
         self.followHerdProbability = followHerdProbability
         self.breakFromHerdProbability = breakFromHerdProbability
         self.randomTurnProbability = randomTurnProbability
         self.probabilityOfExploration = probabilityOfExploration
+        self.probabilityOfDetectingPredator = probabilityOfDetectingPredator
         super().__init__(nLatticeLength, x, y, visibilityRadius, child=child)
         self.life = 8000
         if child:
             self.hunger = round(Prey.maxHunger/8) # Children start out with semi-full hunger bar.
         else:
-            self.hunger = Prey.maxHunger # The initial preys start out with full hunger bar.
+            self.hunger = Prey.maxHunger-20 # The initial preys start out with full hunger bar.
 
         self.plantToFollow = [] # Coordinates to the plant which are top be eaten.
         self.lastPlantEaten = [self.x, self.y] # Coordinates to the last plant eaten.
         self.iterationsMovingToFood = 0 # Counts the number of iterations the prey has been moving to a certain plant.
-        self.iterationsSinceEat = 0
+        self.iterationsSinceEat = 40
         self.previousStep = np.random.randint(1, 5, 1) # 1: left, 2: down, 3: right, 4: up
         self.preyToFollow = [] # Coordinates to the prey which is to be followed.
         self.restTimer = 0 # Will be used to count the number of turns a prey hase been resting (after eating).
         self.predatorToAvoid = []
+        self.fleeTimer = 0 # Will be used to count the number of iterations the prey has been fleing for.
+        self.alertStatus = 0 # 1: The prey has been alerted and will alert other preys.
+                             # 2: The prey has been alerted and has already alerted other preys.
 
     def _look(self):
-
         self.iterationsSinceEat += 1
-        if self.iterationsSinceEat > Prey.maxExplorationTime:
-            self.lastPlantEaten=[self.x, self.y]
-            self.iterationsSinceEat == 0
+        #if self.iterationsSinceEat > Prey.maxExplorationTime:
+        #    self.lastPlantEaten=[self.x, self.y]
+        #    self.iterationsSinceEat == 0
 
-        self.predatorToAvoid=self.follow(self.predators,'predator')
-
-        if self.predatorToAvoid:
-            self.lastPlantEaten = [self.x, self.y]
-            self.iterationsSinceEat == 0
-
+        # If the prey has gone in the same direction for a long time, a new direction is choosen.
         if self.lastPlantEaten:
             diffX = abs(self.lastPlantEaten[0] - self.x)
             diffY = abs(self.lastPlantEaten[1] - self.y)
@@ -57,20 +56,18 @@ class Prey(Animal):
             if diffX + diffY > 0.95*self._latticeLength:
                 self.lastPlantEaten = [self.x, self.y]
                 self.iterationsSinceEat == 0
-        #r=rand()
-        #if r < 0.5:
-        #    self.predatorToAvoid = []
-        #self.LookForPredator() # TO BE DONE
 
+        self.LookForPredator()
         if np.size(self.predatorToAvoid) < 2:
             if self.restTimer < 1:
                 self.LookForPlant()
-                if np.size(self.plantToFollow) < 2 and self.iterationsSinceEat > 40:
+                if np.size(self.plantToFollow) < 2 and self.iterationsSinceEat > 5:
                     self.LookForPrey()
 
     def _walk(self):
-        if self.predatorToAvoid:
-            self.stepAway(self.predatorToAvoid)
+        if self.fleeTimer > 0:                      #
+            self.stepAway(self.predatorToAvoid)     #
+            #self.stepAway(self.predatorToAvoid)
         else:
             if self.restTimer < 1:
                 if self.plantToFollow:
@@ -103,6 +100,7 @@ class Prey(Animal):
                 self.iterationsMovingToFood = 0
                 self.iterationsSinceEat = 0
                 self.plantToFollow = []
+                self._reproduce()
                 if self.hunger > Prey.maxHunger:
                     self.hunger = Prey.maxHunger
 
@@ -122,7 +120,8 @@ class Prey(Animal):
             newBorn = Prey(self._latticeLength, self.x, self.y,
                            followHerdProbability=self.followHerdProbability,
                            visibilityRadius=self._visibilityRadius, child=True)
-            newBorn.update_pointers(self.preys, self.plants, self.plantClusters)
+            newBorn.update_pointers(self.preys, self.predators, self.plants, self.plantClusters)
+            newBorn.lastPlantEaten=self.lastPlantEaten
             self.preys.append(newBorn)
 
     def LookForPlant(self):
@@ -140,7 +139,7 @@ class Prey(Animal):
 
 
                 # Looks at one cluster at a time. Should be faster (might be optimized further).
-                clusterList = np.zeros((self.plantClusters[0].numberOfPlantClusters, 1))
+                clusterList = np.zeros((np.size(self.plantClusters), 1))
                 for i in range(0,self.plantClusters[0].numberOfPlantClusters,1):
                     diffX = abs(self.plantClusters[i].x - self.x)
                     diffY = abs(self.plantClusters[i].y - self.y)
@@ -179,22 +178,70 @@ class Prey(Animal):
                 self.preyToFollow = self.follow(self.preys,'prey')
 
                 # If a prey is followed the preferential direction of the random walk is synched.
-                #if self.preyToFollow and self.iterationsSinceEat > 5:
-                #    for specificPrey in self.preys:
-                #        if specificPrey.lastPlantEaten:
-                #            if specificPrey.x == self.preyToFollow[0] and specificPrey.y == self.preyToFollow[1]:
-                #                self.lastPlantEaten = specificPrey.lastPlantEaten
-                #                break
+                if self.preyToFollow and self.iterationsSinceEat > 20:
+                    for specificPrey in self.preys:
+                        if specificPrey.lastPlantEaten:
+                            if specificPrey.x == self.preyToFollow[0] and specificPrey.y == self.preyToFollow[1]:
+                                self.lastPlantEaten = specificPrey.lastPlantEaten
+                                break
         else:
             r = rand()
             if (self.x == self.preyToFollow[0] and self.y == self.preyToFollow[1]) or r < self.breakFromHerdProbability:
                 self.preyToFollow = []
                 self.previousStep = np.random.randint(1, 5, 1)
 
+    def LookForPredator(self):
 
+        if self.alertStatus > 0:
+            self.alertStatus -= 1
 
+        if  self.fleeTimer > 0:
+            self.fleeTimer -= 1
+            if self.fleeTimer == 0:
+                self.predatorToAvoid = []
 
+        r = rand()
+        if r < self.probabilityOfDetectingPredator:
+            tmpVar = self.follow(self.predators, 'predator')
+            if tmpVar:
+                self.predatorToAvoid = tmpVar
+                self.lastPlantEaten = [self.x, self.y]
+                self.iterationsSinceEat == 0
+                self.fleeTimer=Prey.maxFleeTime
+                if self.alertStatus == 0:
+                    coordinatesAlerted = []
+                    coordinatesAlerted.append((self.x, self.y))
+                    self.alertStatus = 100
+                    self.WarnOtherPrey()
+                #for specificPrey in self.preys:
+                #    specificPrey.alertStatus = 0 # The prey are no longer alerted
 
-
-
-    	
+    def WarnOtherPrey(self):
+        # The chance of alerting the herd has been set to the followHerdProbability ! ! !(THIS SHOULD PROBABLY HAVE ITS OWN PARAMETER)! ! !
+        r = rand()
+        #if r < self.followHerdProbability:
+        if r < 0.7:
+            # Find prey in alert radius.               ! ! !(RIGHT NOW THE VISIBILITY RADIUS IS USED)! ! !
+            visSquare = list(self.visibility())
+            possibleAlertList = []
+            for specificPrey in self.preys:
+                cord = (specificPrey.x, specificPrey.y)
+                if cord in visSquare:
+                    possibleAlertList.append(cord)
+            if possibleAlertList:
+                # Find the preys of found coordinates
+                preysToAlert = []
+                for specificCoordinates in possibleAlertList:
+                    for prey in self.preys:
+                        if prey.x == specificCoordinates[0] and prey.y == specificCoordinates[1] and prey.alertStatus == 0:
+                            preysToAlert.append(prey)
+                            prey.alertStatus = 100
+                            break
+                # Loop over the found prey and warns new prey
+                if preysToAlert:
+                    for specificPrey in preysToAlert:
+                        specificPrey.predatorToAvoid = self.predatorToAvoid
+                        specificPrey.lastPlantEaten = [specificPrey.x, specificPrey.y]
+                        specificPrey.iterationsSinceEat == 0
+                        specificPrey.fleeTimer = Prey.maxFleeTime
+                        specificPrey.WarnOtherPrey() # warn new prey (iteratively)

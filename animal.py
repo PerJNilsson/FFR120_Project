@@ -7,7 +7,7 @@ import random
 
 class Animal(abc.ABC):
     def __init__(self, latticeLength, x=None, y=None, visibilityRadius=2,
-                 reproductionRate=0.005, child=False):
+                 reproductionRate=0.05, child=False):
         self.child = child
         self._latticeLength = latticeLength
         self._visibilityRadius = visibilityRadius
@@ -168,9 +168,6 @@ class Animal(abc.ABC):
             #------------------------------------------
         #3. Look around if anyone is nearby
 
-        #if kindOfTarget == 'plant':
-            # ------------------------------------------
-            #plantList = np.zeros((np.size(objects), 1))
         possibleFollowList = []
         for i in range(0, np.size(objects), 1):
             # Noticably faster than using the visibility sphere
@@ -182,13 +179,10 @@ class Animal(abc.ABC):
                 diffY = self._latticeLength - diffY
             if diffX+diffY < self._visibilityRadius and diffX+diffY > 0:
                 possibleFollowList.append([objects[i].x,objects[i].y])
-            #------------------------------------------
 
         toFollow = None
         if(kindOfTarget=='prey') or (kindOfTarget == 'predator'):
-            #possibleFollowList.remove((self.x, self.y))
             if possibleFollowList:
-
                 distanceList = np.zeros((len(possibleFollowList), 1))
                 for i in range(0,len(possibleFollowList),1):
                     diffX = abs(possibleFollowList[i][0] - self.x)
@@ -201,7 +195,7 @@ class Animal(abc.ABC):
                 # Finds the order of the preys (according to proximity to the searching prey)
                 preySortedIndeces = np.argsort(distanceList, kind='quicksort', axis=0)
                 if kindOfTarget == 'prey':
-                    toFollow = possibleFollowList[preySortedIndeces[-1,0]] # Pick prey furthest away.
+                    toFollow = possibleFollowList[preySortedIndeces[-1, 0]] # Pick prey furthest away.
                 else:
                     toFollow = possibleFollowList[preySortedIndeces[0, 0]]  # Pick prey closest.
                 #toFollow = random.choice(possibleFollowList)  # Pick random prey.
@@ -241,7 +235,7 @@ class Animal(abc.ABC):
             self._look()
             self._walk()
             self._eat()
-            self._reproduce()
+            #self._reproduce()
             self._die()
 
     def update_pointers(self, preys, predators, plants=[], plantClusters=[]):

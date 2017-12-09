@@ -43,7 +43,7 @@ class Plant:
     numberOfPlants=0    #
     plantObjects=[]     # Variables shared by all plant objects
     clusterObjects=[]   #
-    maxNumberOfCharges = 10
+    maxNumberOfCharges = 23
 
     def __init__(self,coordinates,clusterID):
         self.x=coordinates[0]

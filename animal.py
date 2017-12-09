@@ -14,6 +14,7 @@ class Animal(abc.ABC):
             Animal._latticeLength = latticeLength
         cls.grid = [[deque() for i in range(Animal._latticeLength)] for j in
                     range(Animal._latticeLength)]
+        cls.coordinates = set()
         cls.xs = None
         cls.ys = None
 
@@ -27,6 +28,7 @@ class Animal(abc.ABC):
             x = randint(Animal._latticeLength)
         if y is None:
             y = randint(Animal._latticeLength)
+        type(self).coordinates.add((x, y))
         type(self).grid[y][x].append(self)
 
         if child:
@@ -171,23 +173,26 @@ class Animal(abc.ABC):
         cls.population = 0
         newGrid = [[deque() for i in range(Animal._latticeLength)] for j in
                    range(Animal._latticeLength)]
-        for y in range(Animal._latticeLength):
-            for x in range(Animal._latticeLength):
-                for elem in list(cls.grid[y][x]):
-                    if elem._reproduce():
-                        newGrid[y][x].append(elem._create_child(x, y))
-                        (cls.xs).append(x)
-                        (cls.ys).append(y)
-                        cls.population += 1
-                    xTemp, yTemp = elem._next_coordinates(x, y)
-                    newGrid[yTemp][xTemp].append(elem)
-                    elem._eat(xTemp, yTemp)
-                    if elem._die():
-                        continue
-                    (cls.xs).append(xTemp)
-                    (cls.ys).append(yTemp)
+        newCoordinates = set()
+        for x, y in cls.coordinates:
+            for elem in list(cls.grid[y][x]):
+                if elem._reproduce():
+                    newGrid[y][x].append(elem._create_child(x, y))
+                    (cls.xs).append(x)
+                    (cls.ys).append(y)
+                    newCoordinates.add((x,y))
                     cls.population += 1
+                xTemp, yTemp = elem._next_coordinates(x, y)
+                newGrid[yTemp][xTemp].append(elem)
+                elem._eat(xTemp, yTemp)
+                if elem._die():
+                    continue
+                (cls.xs).append(xTemp)
+                (cls.ys).append(yTemp)
+                newCoordinates.add((xTemp, yTemp))
+                cls.population += 1
         cls.grid = newGrid
+        cls.coordinates = newCoordinates
 
     @classmethod
     def update_handler(cls, handler):

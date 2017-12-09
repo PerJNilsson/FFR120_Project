@@ -42,8 +42,8 @@ def plot(animals, predators, plantObjects, clusterObjects, preyPlotHandle, plant
     predatorsPlotHandle.set_data(xPredator, yPredator)
     plantPlotHandle.set_data(xPlant, yPlant)
     clusterPlotHandle.set_data(xCluster, yCluster)
-    plt.draw()
-    plt.pause(0.00001)
+    #plt.draw()
+    #plt.pause(0.00001)
 
 def main():
 
@@ -97,7 +97,7 @@ def main():
     number_of_predators = []
     number_of_preys.append(np.size(preys))
     number_of_predators.append(np.size(predators))
-    while i < 5000:
+    while i < 10000:
         i+=1
         clusterObjects, plantObjects = plant_module.PlantGrowth(clusterObjects, plantObjects, gridSize,
                                                                 clusterSpawnRate,
@@ -131,9 +131,10 @@ def main():
             #    prey.lastPlantEaten = [r[0], r[1]]
             #    prey.explorationTimer = Prey.maxExploreTime
         if i%1 == 0:
+            plt.axis([-1, gridSize, -1, gridSize])
             plot(preys, predators, plantObjects, clusterObjects, preyPlotHandle, plantPlotHandle, clusterPlotHandle,
                  predatorsPlotHandle)
-
+            plt.savefig('pictures/pic{:04}.png'.format(i), format='png')
         number_of_preys.append(np.size(preys))
         number_of_predators.append(np.size(predators))
 

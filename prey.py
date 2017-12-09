@@ -127,7 +127,7 @@ class Prey(Animal):
         if self.iterationsMovingToFood > 30:
             self.plantToFollow=[]
 
-        if np.size(self.plantToFollow) < 2 and self.hunger < 380:
+        if np.size(self.plantToFollow) < 2 and self.hunger < 680:
             # The prey will look for new food if it has not yet seen any food or if it has been moving towards the same
             # food for a long time. A new target is choosen to avoid preys getting stuck trying to eat food which has
             # already been eaten.

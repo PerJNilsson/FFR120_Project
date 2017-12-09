@@ -80,7 +80,12 @@ class Animal(abc.ABC):
     def stepAway(self, targetCoord):
         def choise(difference, sizeGrid):
             if difference == 0:
-                return 0
+                q = rand()
+                if q < 0.5:
+                    return 1
+                else:
+                    return -1
+                #return 0
             if abs(difference) < sizeGrid/2:
                 return np.sign(difference)
             elif abs(difference) > sizeGrid/2:

@@ -13,8 +13,8 @@ class Prey(Animal):
 
     # Example of using a parent's constructor
     def __init__(self, nLatticeLength, x=None, y=None,
-                 followHerdProbability=0.4, breakFromHerdProbability=0.9, randomTurnProbability=0.4,
-                 probabilityOfExploration = 1, probabilityOfDetectingPredator = 0.5, visibilityRadius=16, child=False):
+                 followHerdProbability=0.3, breakFromHerdProbability=0.9, randomTurnProbability=0.4,
+                 probabilityOfExploration = 1, probabilityOfDetectingPredator = 0.1, visibilityRadius=17, child=False):
         self.followHerdProbability = followHerdProbability
         self.breakFromHerdProbability = breakFromHerdProbability
         self.randomTurnProbability = randomTurnProbability
@@ -53,14 +53,14 @@ class Prey(Animal):
                 diffX = self._latticeLength - diffX
             if diffY > self._latticeLength/2:
                 diffY = self._latticeLength - diffY
-            if diffX + diffY > 0.95*self._latticeLength:
+            if diffX + diffY > 0.9*self._latticeLength:
                 self.lastPlantEaten = [self.x, self.y]
                 self.iterationsSinceEat == 0
 
-        self.LookForPredator()
+        #self.LookForPredator()
         if np.size(self.predatorToAvoid) < 2:
             if self.restTimer < 1:
-                self.LookForPlant()
+                #self.LookForPlant()
                 if np.size(self.plantToFollow) < 2 and self.iterationsSinceEat > 5:
                     self.LookForPrey()
 
@@ -105,8 +105,8 @@ class Prey(Animal):
                     self.hunger = Prey.maxHunger
 
     def _die(self, killed=False):
-        if self.life == 0 or self.hunger == 0:
-            self.preys.remove(self)
+        #if self.life == 0 or self.hunger == 0:
+        #    self.preys.remove(self)
         #if killed == True:
             #self.preys.remove(self)
         self.life -= 1
@@ -211,7 +211,7 @@ class Prey(Animal):
                 if self.alertStatus == 0:
                     coordinatesAlerted = []
                     coordinatesAlerted.append((self.x, self.y))
-                    self.alertStatus = 100
+                    self.alertStatus = 10
                     self.WarnOtherPrey()
                 #for specificPrey in self.preys:
                 #    specificPrey.alertStatus = 0 # The prey are no longer alerted
@@ -219,8 +219,8 @@ class Prey(Animal):
     def WarnOtherPrey(self):
         # The chance of alerting the herd has been set to the followHerdProbability ! ! !(THIS SHOULD PROBABLY HAVE ITS OWN PARAMETER)! ! !
         r = rand()
-        #if r < self.followHerdProbability:
-        if r < 0.7:
+        if r < self.followHerdProbability:
+        #if r < 0.7:
             # Find prey in alert radius.               ! ! !(RIGHT NOW THE VISIBILITY RADIUS IS USED)! ! !
             visSquare = list(self.visibility())
             possibleAlertList = []
@@ -235,7 +235,7 @@ class Prey(Animal):
                     for prey in self.preys:
                         if prey.x == specificCoordinates[0] and prey.y == specificCoordinates[1] and prey.alertStatus == 0:
                             preysToAlert.append(prey)
-                            prey.alertStatus = 100
+                            prey.alertStatus = 10
                             break
                 # Loop over the found prey and warns new prey
                 if preysToAlert:

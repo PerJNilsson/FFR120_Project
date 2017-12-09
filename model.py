@@ -59,15 +59,15 @@ def main():
     '''
 
 
-    initialNumberOfPreys = 200
-    initialNumberOfPredators = 5
-    initialNumberOfClusters = 3
-    gridSize = 150
-    clusterSpawnRate = 0.005  # The probability of generating a new cluster for each generation
+    initialNumberOfPreys = 400
+    initialNumberOfPredators = 10
+    initialNumberOfClusters = 5
+    gridSize = 300
+    clusterSpawnRate = 0.01  # The probability of generating a new cluster for each generation
     clusterDistributionParameter = 20  # A higher value will tend to create the clusters more evenly spread.
     # In the limit that the parameter is 1 the clusters will spawn completely random.
     clusterSizeParameter = 100  # The amount of plants per cluster (SHOULD THIS BE THE UPPER LIMIT OR MEAN?!?!?!?!?!)
-    clusterStandardDeviation = 8  # The standard deviation used to generate the plants which make up the cluster.
+    clusterStandardDeviation = 12  # The standard deviation used to generate the plants which make up the cluster.
 
 
     # Initializes "graphics"
@@ -109,8 +109,10 @@ def main():
             prey()
         for predator in predators:
             predator()
+        plt.title("Prey = {}, Predators = {}, Iteration = {}".format(np.size(preys),
+                                                     np.size(predators),i))
 
-        if i == 500:
+        if i == 1:
             predators = [Predator(gridSize) for j in range(initialNumberOfPredators)]
             for prey in preys:
                 prey.update_pointers(preys, predators, plantObjects, clusterObjects)

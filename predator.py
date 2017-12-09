@@ -4,7 +4,7 @@ from numpy.random import rand
 import random
 
 class Predator(Animal):
-    maxHunger = 400  # The maximum amount of food the predator can store.
+    maxHunger = 800  # The maximum amount of food the predator can store.
 
     # Example of using a parent's constructor
     def __init__(self, nLatticeLength, x=None, y=None, visibilityRadius=15, child=False, randomTurnProbability=0.3):
@@ -14,7 +14,7 @@ class Predator(Animal):
         if child:
             self.hunger = round(Predator.maxHunger / 4)  # Children start out with semi-full hunger bar.
         else:
-            self.hunger = 350  # The initial preys start out with almost full hunger bar.
+            self.hunger = 750  # The initial preys start out with almost full hunger bar.
 
         self.iterationsMovingToFood = 0  # Counts the number of iterations the prey has been moving to a certain plant.
         self.previousStep = np.random.randint(1, 4, 1)  # 1: left, 2: down, 3: right, 4: up
@@ -42,7 +42,7 @@ class Predator(Animal):
     # If no prey, call random walk
     def searchPrey(self):
         # Getting the coords of the predator
-        if self.hunger < 350: # If recently eaten will not move
+        if self.hunger < 750: # If recently eaten will not move
             coordsPredator = [self.x, self.y]
             targetToChase = self.follow(self.preys, 'predator')
             if targetToChase == None:

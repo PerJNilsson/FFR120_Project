@@ -6,15 +6,15 @@ import math
 
 class Prey(Animal):
 
-    maxHunger = 400# The maximum amount of food the prey can store.
+    maxHunger = 700# The maximum amount of food the prey can store.
     maxRestTime = 20 # The amount of turns a prey have to rest after having eaten a plant.
     maxExplorationTime = 200
-    maxFleeTime = 40
+    maxFleeTime = 50
 
     # Example of using a parent's constructor
     def __init__(self, nLatticeLength, x=None, y=None,
-                 followHerdProbability=0.3, breakFromHerdProbability=0.9, randomTurnProbability=0.4,
-                 probabilityOfExploration = 1, probabilityOfDetectingPredator = 0.1, visibilityRadius=17, child=False):
+                 followHerdProbability=0, breakFromHerdProbability=0.9, randomTurnProbability=0.4,
+                 probabilityOfExploration = 1, probabilityOfDetectingPredator = 0.2, visibilityRadius=17, child=False):
         self.followHerdProbability = followHerdProbability
         self.breakFromHerdProbability = breakFromHerdProbability
         self.randomTurnProbability = randomTurnProbability
@@ -23,7 +23,7 @@ class Prey(Animal):
         super().__init__(nLatticeLength, x, y, visibilityRadius, child=child)
         self.life = 8000
         if child:
-            self.hunger = round(Prey.maxHunger/8) # Children start out with semi-full hunger bar.
+            self.hunger = round(Prey.maxHunger/10) # Children start out with semi-full hunger bar.
         else:
             self.hunger = Prey.maxHunger-20 # The initial preys start out with full hunger bar.
 
@@ -41,9 +41,6 @@ class Prey(Animal):
 
     def _look(self):
         self.iterationsSinceEat += 1
-        #if self.iterationsSinceEat > Prey.maxExplorationTime:
-        #    self.lastPlantEaten=[self.x, self.y]
-        #    self.iterationsSinceEat == 0
 
         # If the prey has gone in the same direction for a long time, a new direction is choosen.
         if self.lastPlantEaten:
@@ -57,10 +54,10 @@ class Prey(Animal):
                 self.lastPlantEaten = [self.x, self.y]
                 self.iterationsSinceEat == 0
 
-        #self.LookForPredator()
+        self.LookForPredator()
         if np.size(self.predatorToAvoid) < 2:
             if self.restTimer < 1:
-                #self.LookForPlant()
+                self.LookForPlant()
                 if np.size(self.plantToFollow) < 2 and self.iterationsSinceEat > 5:
                     self.LookForPrey()
 
@@ -76,7 +73,7 @@ class Prey(Animal):
                     self.step(self.preyToFollow)
                 else:
                     r = rand()
-                    if r < self.probabilityOfExploration and self.hunger < 380 and self.lastPlantEaten: # Only explore if the food is running low.
+                    if r < self.probabilityOfExploration and self.hunger < 680 and self.lastPlantEaten: # Only explore if the food is running low.
                         self.stepAway(self.lastPlantEaten)
                     else:
                         self._random_walk()
@@ -105,8 +102,8 @@ class Prey(Animal):
                     self.hunger = Prey.maxHunger
 
     def _die(self, killed=False):
-        #if self.life == 0 or self.hunger == 0:
-        #    self.preys.remove(self)
+        if self.life == 0 or self.hunger == 0:
+            self.preys.remove(self)
         #if killed == True:
             #self.preys.remove(self)
         self.life -= 1
@@ -183,6 +180,8 @@ class Prey(Animal):
                         if specificPrey.lastPlantEaten:
                             if specificPrey.x == self.preyToFollow[0] and specificPrey.y == self.preyToFollow[1]:
                                 self.lastPlantEaten = specificPrey.lastPlantEaten
+                                self.fleeTimer = specificPrey.fleeTimer
+                                self.predatorToAvoid = specificPrey.predatorToAvoid
                                 break
         else:
             r = rand()
@@ -209,9 +208,7 @@ class Prey(Animal):
                 self.iterationsSinceEat == 0
                 self.fleeTimer=Prey.maxFleeTime
                 if self.alertStatus == 0:
-                    coordinatesAlerted = []
-                    coordinatesAlerted.append((self.x, self.y))
-                    self.alertStatus = 10
+                    self.alertStatus = 5
                     self.WarnOtherPrey()
                 #for specificPrey in self.preys:
                 #    specificPrey.alertStatus = 0 # The prey are no longer alerted
@@ -235,7 +232,7 @@ class Prey(Animal):
                     for prey in self.preys:
                         if prey.x == specificCoordinates[0] and prey.y == specificCoordinates[1] and prey.alertStatus == 0:
                             preysToAlert.append(prey)
-                            prey.alertStatus = 10
+                            prey.alertStatus = 5
                             break
                 # Loop over the found prey and warns new prey
                 if preysToAlert:
@@ -244,4 +241,4 @@ class Prey(Animal):
                         specificPrey.lastPlantEaten = [specificPrey.x, specificPrey.y]
                         specificPrey.iterationsSinceEat == 0
                         specificPrey.fleeTimer = Prey.maxFleeTime
-                        specificPrey.WarnOtherPrey() # warn new prey (iteratively)
+                        #specificPrey.WarnOtherPrey() # warn new prey (iteratively)

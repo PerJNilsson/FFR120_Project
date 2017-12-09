@@ -60,9 +60,9 @@ def main():
 
 
     initialNumberOfPreys = 400
-    initialNumberOfPredators = 10
+    initialNumberOfPredators = 40
     initialNumberOfClusters = 5
-    gridSize = 300
+    gridSize = 512
     clusterSpawnRate = 0.01  # The probability of generating a new cluster for each generation
     clusterDistributionParameter = 20  # A higher value will tend to create the clusters more evenly spread.
     # In the limit that the parameter is 1 the clusters will spawn completely random.
@@ -84,7 +84,7 @@ def main():
     clusterObjects[0].setClusterCheckRadius(clusterStandardDeviation * math.sqrt(-2 * math.log(0.001 * clusterStandardDeviation * math.sqrt(2 * math.pi)))+40)
     print(clusterStandardDeviation * math.sqrt(-2 * math.log(0.001 * clusterStandardDeviation * math.sqrt(2 * math.pi)))+40)
 
-    preys = [Prey(gridSize) for i in range(initialNumberOfPreys)]
+    preys = [Prey(gridSize, visibilityRadius = 35) for i in range(initialNumberOfPreys)]
     #predators = [Predator(gridSize) for j in range(initialNumberOfPredators)]
     predators = []
     for prey in preys:
@@ -95,8 +95,10 @@ def main():
     i=0
     number_of_preys = []
     number_of_predators = []
+    number_of_plants = []
     number_of_preys.append(np.size(preys))
     number_of_predators.append(np.size(predators))
+    number_of_plants.append(np.size(plantObjects))
     while i < 10000:
         i+=1
         clusterObjects, plantObjects = plant_module.PlantGrowth(clusterObjects, plantObjects, gridSize,
@@ -117,7 +119,7 @@ def main():
                                                      np.size(predators),i))
 
         if i == 1:
-            predators = [Predator(gridSize) for j in range(initialNumberOfPredators)]
+            predators = [Predator(gridSize, visibilityRadius = 30, reproductionRate = 0.01) for j in range(initialNumberOfPredators)]
             for prey in preys:
                 prey.update_pointers(preys, predators, plantObjects, clusterObjects)
             for predator in predators:
@@ -137,11 +139,13 @@ def main():
             plt.savefig('pictures/pic{:04}.png'.format(i), format='png')
         number_of_preys.append(np.size(preys))
         number_of_predators.append(np.size(predators))
+        number_of_plants.append(np.size(plantObjects))
 
     plt.figure(2)
+    plt.plot(range(0, i+1), number_of_plants, 'g')
     plt.plot(range(0, i + 1), number_of_preys, 'b')
     plt.plot(range(0,i+1), number_of_predators, 'r')
-
+    plt.savefig('pictures/aBlood.png', format='png')
     plt.show()
 
     print("i = %i\n# of preys = %i\n# of plants = %i\n# of predators = %i" % (

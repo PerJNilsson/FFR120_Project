@@ -14,13 +14,13 @@ class Prey(Animal):
     # Example of using a parent's constructor
     def __init__(self, nLatticeLength, x=None, y=None,
                  followHerdProbability=0, breakFromHerdProbability=0.9, randomTurnProbability=0.4,
-                 probabilityOfExploration = 1, probabilityOfDetectingPredator = 0.2, visibilityRadius=17, child=False):
+                 probabilityOfExploration = 1, reproductionRate = 0.05, probabilityOfDetectingPredator = 0.2, visibilityRadius=17, child=False):
         self.followHerdProbability = followHerdProbability
         self.breakFromHerdProbability = breakFromHerdProbability
         self.randomTurnProbability = randomTurnProbability
         self.probabilityOfExploration = probabilityOfExploration
         self.probabilityOfDetectingPredator = probabilityOfDetectingPredator
-        super().__init__(nLatticeLength, x, y, visibilityRadius, child=child)
+        super().__init__(nLatticeLength, x, y, reproductionRate=reproductionRate, visibilityRadius=visibilityRadius, child=child)
         self.life = 8000
         if child:
             self.hunger = round(Prey.maxHunger/10) # Children start out with semi-full hunger bar.

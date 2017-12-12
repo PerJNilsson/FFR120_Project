@@ -6,22 +6,22 @@ import math
 
 class Prey(Animal):
 
-    maxHunger = 700# The maximum amount of food the prey can store.
+    maxHunger = 800# The maximum amount of food the prey can store.
     maxRestTime = 20 # The amount of turns a prey have to rest after having eaten a plant.
     maxExplorationTime = 200
     maxFleeTime = 50
 
     # Example of using a parent's constructor
     def __init__(self, nLatticeLength, x=None, y=None,
-                 followHerdProbability=0, breakFromHerdProbability=0.9, randomTurnProbability=0.4,
-                 probabilityOfExploration = 1, reproductionRate = 0.05, probabilityOfDetectingPredator = 0.2, visibilityRadius=17, child=False):
+                 followHerdProbability=0.4, breakFromHerdProbability=0.9, randomTurnProbability=0.4,
+                 probabilityOfExploration = 1, reproductionRate = 0.01, probabilityOfDetectingPredator = 0.2, visibilityRadius=17, child=False):
         self.followHerdProbability = followHerdProbability
         self.breakFromHerdProbability = breakFromHerdProbability
         self.randomTurnProbability = randomTurnProbability
         self.probabilityOfExploration = probabilityOfExploration
         self.probabilityOfDetectingPredator = probabilityOfDetectingPredator
-        super().__init__(nLatticeLength, x, y, reproductionRate=reproductionRate, visibilityRadius=visibilityRadius, child=child)
-        self.life = 8000
+        super().__init__(nLatticeLength, x, y,followHerdProbability=followHerdProbability, reproductionRate=reproductionRate, visibilityRadius=visibilityRadius, child=child)
+        self.life = 20000
         if child:
             self.hunger = round(Prey.maxHunger/10) # Children start out with semi-full hunger bar.
         else:

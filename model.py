@@ -38,10 +38,11 @@ def plot(animals, predators, plantObjects, clusterObjects, preyPlotHandle, plant
         xCluster[i] = singleClusterObject.x
         yCluster[i] = singleClusterObject.y
 
+
+    plantPlotHandle.set_data(xPlant, yPlant)
+    #clusterPlotHandle.set_data(xCluster, yCluster)
     preyPlotHandle.set_data(xPrey, yPrey)
     predatorsPlotHandle.set_data(xPredator, yPredator)
-    plantPlotHandle.set_data(xPlant, yPlant)
-    clusterPlotHandle.set_data(xCluster, yCluster)
     #plt.draw()
     #plt.pause(0.00001)
 
@@ -60,17 +61,17 @@ def main():
 
 
     initialNumberOfPreys = 400
-    initialNumberOfPredators = 40
-    initialNumberOfClusters = 5
+    initialNumberOfPredators = 15
+    initialNumberOfClusters = 20
     gridSize = 512
-    clusterSpawnRate = 0.01  # The probability of generating a new cluster for each generation
+    clusterSpawnRate = 0.008  # The probability of generating a new cluster for each generation
     clusterDistributionParameter = 20  # A higher value will tend to create the clusters more evenly spread.
     # In the limit that the parameter is 1 the clusters will spawn completely random.
-    clusterSizeParameter = 100  # The amount of plants per cluster (SHOULD THIS BE THE UPPER LIMIT OR MEAN?!?!?!?!?!)
+    clusterSizeParameter = 150  # The amount of plants per cluster (SHOULD THIS BE THE UPPER LIMIT OR MEAN?!?!?!?!?!)
     clusterStandardDeviation = 12  # The standard deviation used to generate the plants which make up the cluster.
 
 
-    # Initializes "graphics"
+    #  Initializes "graphics"
     plt.ioff()
     plt.show()
     plt.axis([-1, gridSize, -1, gridSize])
@@ -84,9 +85,13 @@ def main():
     clusterObjects[0].setClusterCheckRadius(clusterStandardDeviation * math.sqrt(-2 * math.log(0.001 * clusterStandardDeviation * math.sqrt(2 * math.pi)))+40)
     print(clusterStandardDeviation * math.sqrt(-2 * math.log(0.001 * clusterStandardDeviation * math.sqrt(2 * math.pi)))+40)
 
-    preys = [Prey(gridSize, visibilityRadius = 35) for i in range(initialNumberOfPreys)]
-    #predators = [Predator(gridSize) for j in range(initialNumberOfPredators)]
-    predators = []
+    preys = [Prey(gridSize, followHerdProbability=0.6, visibilityRadius = 23, reproductionRate = 0.1) for i in range(initialNumberOfPreys)]
+    predators = [Predator(gridSize, visibilityRadius=22, reproductionRate=0.8) for j in range(initialNumberOfPredators)]
+
+    for prey in preys:
+        prey.update_pointers(preys, predators, plantObjects, clusterObjects)
+    for predator in predators:
+        predator.update_pointers(preys, predators)
     for prey in preys:
         prey.update_pointers(preys, predators, plantObjects, clusterObjects)
     #for predator in predators:
@@ -97,9 +102,9 @@ def main():
     number_of_predators = []
     number_of_plants = []
     number_of_preys.append(np.size(preys))
-    number_of_predators.append(np.size(predators))
-    number_of_plants.append(np.size(plantObjects))
-    while i < 10000:
+    number_of_predators.append(np.size(predators)*10)
+    number_of_plants.append(np.size(plantObjects)/100)
+    while preys and predators:
         i+=1
         clusterObjects, plantObjects = plant_module.PlantGrowth(clusterObjects, plantObjects, gridSize,
                                                                 clusterSpawnRate,
@@ -118,36 +123,35 @@ def main():
         plt.title("Prey = {}, Predators = {}, Iteration = {}".format(np.size(preys),
                                                      np.size(predators),i))
 
-        if i == 1:
-            predators = [Predator(gridSize, visibilityRadius = 30, reproductionRate = 0.01) for j in range(initialNumberOfPredators)]
-            for prey in preys:
-                prey.update_pointers(preys, predators, plantObjects, clusterObjects)
-            for predator in predators:
-                predator.update_pointers(preys, predators)
+        #if i == 1:
+        #    predators = [Predator(gridSize, visibilityRadius=22, reproductionRate=0.2) for j in range(initialNumberOfPredators)]
+        #    for prey in preys:
+        #        prey.update_pointers(preys, predators, plantObjects, clusterObjects)
+        #    for predator in predators:
+        #        predator.update_pointers(preys, predators)
 
-        if i%100 == 0:
+        if i%1000 == 0:
             print("i = %i\n# of preys = %i\n# of plants = %i\n# of predators = %i" %(i,np.size(preys),np.size(plantObjects),np.size(predators)))
             #r = np.random.randint(0, gridSize,2)
             #print(r)
             #for prey in preys:
             #    prey.lastPlantEaten = [r[0], r[1]]
             #    prey.explorationTimer = Prey.maxExploreTime
-        if i%1 == 0:
-            plt.axis([-1, gridSize, -1, gridSize])
-            plot(preys, predators, plantObjects, clusterObjects, preyPlotHandle, plantPlotHandle, clusterPlotHandle,
-                 predatorsPlotHandle)
-            plt.savefig('pictures/pic{:04}.png'.format(i), format='png')
+        #if i%1 == 0:
+        #    plt.axis([-1, gridSize, -1, gridSize])
+        #    plot(preys, predators, plantObjects, clusterObjects, preyPlotHandle, plantPlotHandle, clusterPlotHandle,
+        #         predatorsPlotHandle)
+        #    plt.savefig('pictures/pic{:04}.png'.format(i), format='png')
         number_of_preys.append(np.size(preys))
-        number_of_predators.append(np.size(predators))
-        number_of_plants.append(np.size(plantObjects))
+        number_of_predators.append(np.size(predators)*10)
+        number_of_plants.append(np.size(plantObjects)/10)
 
-    plt.figure(2)
+
+    plt.figure()
     plt.plot(range(0, i+1), number_of_plants, 'g')
     plt.plot(range(0, i + 1), number_of_preys, 'b')
     plt.plot(range(0,i+1), number_of_predators, 'r')
     plt.savefig('pictures/aBlood.png', format='png')
-    plt.show()
-
     print("i = %i\n# of preys = %i\n# of plants = %i\n# of predators = %i" % (
         i, np.size(preys), np.size(plantObjects), np.size(predators)))
     plot(preys, predators, plantObjects, clusterObjects, preyPlotHandle, plantPlotHandle, clusterPlotHandle,

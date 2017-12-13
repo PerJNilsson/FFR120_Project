@@ -13,7 +13,7 @@ class Prey(Animal):
 
     # Example of using a parent's constructor
     def __init__(self, nLatticeLength, x=None, y=None,
-                 followHerdProbability=0.4, breakFromHerdProbability=0.9, randomTurnProbability=0.4,
+                 followHerdProbability=0, breakFromHerdProbability=0.9, randomTurnProbability=0.4,
                  probabilityOfExploration = 1, reproductionRate = 0.08, probabilityOfDetectingPredator = 0.1, visibilityRadius=17, child=False):
         self.followHerdProbability = followHerdProbability
         self.breakFromHerdProbability = breakFromHerdProbability

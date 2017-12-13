@@ -46,7 +46,7 @@ def plot(animals, predators, plantObjects, clusterObjects, preyPlotHandle, plant
     plt.pause(0.00001)
 
 def main():
-    numberOfRuns = 5
+    numberOfRuns = 3
     maximumLengthOfRun = 30000
 
     initialNumberOfPreys = 400

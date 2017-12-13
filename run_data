@@ -1,0 +1,15 @@
+Initial number of preys = 400 
+Initial number of predators = 10 
+Initial number of plant clusters = 30 
+Grid size = 512 
+cluster spawn rate = 0.020000 
+cluster distribution parameter = 40 
+cluster size parameter = 30 
+cluster standard deviation 9.000000 
+
+========================================================== 
+Iterations passed = 7883
+number of preys = 740
+number of predators = 0
+number of plant clusters = 15
+number of plants = 348

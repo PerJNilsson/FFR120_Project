@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>reveal.js</title>
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+        <section>
+          <section>
+            <h2>Project Group 5</h2><p>Reverse-engineer a predator prey model</p>
+          </section>
+        </section>
+
+				<section>
+					<img src="show.png" alt="Frame of the simulation" width="400" height="400" align="left">
+					<ul>
+						<li> Introduction <font size="6">-Per </font></li>
+						<li> Method <font size="6">- Robin </font></li>
+						<li> Results and discussion <font size="6">- Jan </font></li>
+					</ul>
+				</section>
+        <section>
+          <section>
+            <h3>Agent based modeling</h3>
+            <p class="fragment"  align="left">Start out simple</p>
+            <p class="fragment"  align="left">Implement herd behaviours <br>
+            	<font size="5">&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp-Follow herd</font> <br>
+            	<font size="5"> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp-Warn herd</font></p>
+          </section>
+          <section>
+          	<video width="600" height="600" controls>
+  				<source src="flee.mp4" type="video/mp4">
+  					Flee behaviour
+			</video>
+          </section>
+                    <section>
+          	<video width="600" height="600" controls>
+  				<source src="follow.mp4" type="video/mp4">
+			</video>
+          </section>
+          <section>
+            <h2>Prey</h2>
+            <ol>
+              <li class+"fragment">Look for plants/predators/prey</li>
+              <li class+"fragment">Walk depending on results</li>
+              <li class+"fragment">Age, starve or reproduce</li>
+            </ol>
+          </section>
+        </section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>

@@ -38,15 +38,15 @@ def plot(animals, predators, plantObjects, clusterObjects, preyPlotHandle, plant
         xCluster[i] = singleClusterObject.x
         yCluster[i] = singleClusterObject.y
 
+    plantPlotHandle.set_data(xPlant, yPlant)
+    #clusterPlotHandle.set_data(xCluster, yCluster)
     preyPlotHandle.set_data(xPrey, yPrey)
     predatorsPlotHandle.set_data(xPredator, yPredator)
-    plantPlotHandle.set_data(xPlant, yPlant)
-    clusterPlotHandle.set_data(xCluster, yCluster)
-    plt.draw()
-    plt.pause(0.00001)
+    #plt.draw()
+    #plt.pause(0.00001)
 
 def main():
-    numberOfRuns = 5
+    numberOfRuns = 1
     maximumLengthOfRun = 30000
 
     initialNumberOfPreys = 400
@@ -90,7 +90,7 @@ def main():
             -2 * math.log(0.001 * clusterStandardDeviation * math.sqrt(2 * math.pi))) + 40)
 
         preys = [Prey(gridSize, visibilityRadius = 27, reproductionRate = 0.1) for i in range(initialNumberOfPreys)]
-        predators = [Predator(gridSize, visibilityRadius = 22, reproductionRate = 0.2) for j in
+        predators = [Predator(gridSize, visibilityRadius = 22, reproductionRate = 0.4) for j in
                      range(initialNumberOfPredators)]
         for prey in preys:
             prey.update_pointers(preys, predators, plantObjects, clusterObjects)
@@ -123,13 +123,13 @@ def main():
             plt.title("Prey = {}, Predators = {}, Iteration = {}".format(np.size(preys),
                                                      np.size(predators),i))
 
-            #if i%100 == 0:
-            #    print("i = %i\n# of preys = %i\n# of plants = %i\n# of predators = %i" %(i,np.size(preys),np.size(plantObjects),np.size(predators)))
-            #if i%1 == 0:
-            #    plt.axis([-1, gridSize, -1, gridSize])
-            #    plot(preys, predators, plantObjects, clusterObjects, preyPlotHandle, plantPlotHandle, clusterPlotHandle,
-            #         predatorsPlotHandle)
-            #    plt.savefig('pictures/pic{:04}.png'.format(i), format='png')
+            if i%100 == 0:
+                print("i = %i\n# of preys = %i\n# of plants = %i\n# of predators = %i" %(i,np.size(preys),np.size(plantObjects),np.size(predators)))
+            if i%1 == 0:
+                plt.axis([-1, gridSize, -1, gridSize])
+                plot(preys, predators, plantObjects, clusterObjects, preyPlotHandle, plantPlotHandle, clusterPlotHandle,
+                     predatorsPlotHandle)
+                plt.savefig('pictures/pic{:04}.png'.format(i), format='png')
             number_of_preys.append(np.size(preys))
             number_of_predators.append(10*np.size(predators))
             number_of_plants.append(np.size(plantObjects))

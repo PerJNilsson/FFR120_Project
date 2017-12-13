@@ -6,21 +6,21 @@ import math
 
 class Prey(Animal):
 
-    maxHunger = 800# The maximum amount of food the prey can store.
+    maxHunger = 500# The maximum amount of food the prey can store.
     maxRestTime = 20 # The amount of turns a prey have to rest after having eaten a plant.
-    maxExplorationTime = 200
+    maxExplorationTime = 200 # NOT SURE IF THIS IS USED ANYMORE
     maxFleeTime = 50
 
     # Example of using a parent's constructor
     def __init__(self, nLatticeLength, x=None, y=None,
                  followHerdProbability=0.4, breakFromHerdProbability=0.9, randomTurnProbability=0.4,
-                 probabilityOfExploration = 1, reproductionRate = 0.01, probabilityOfDetectingPredator = 0.2, visibilityRadius=17, child=False):
+                 probabilityOfExploration = 1, reproductionRate = 0.08, probabilityOfDetectingPredator = 0.1, visibilityRadius=17, child=False):
         self.followHerdProbability = followHerdProbability
         self.breakFromHerdProbability = breakFromHerdProbability
         self.randomTurnProbability = randomTurnProbability
         self.probabilityOfExploration = probabilityOfExploration
         self.probabilityOfDetectingPredator = probabilityOfDetectingPredator
-        super().__init__(nLatticeLength, x, y,followHerdProbability=followHerdProbability, reproductionRate=reproductionRate, visibilityRadius=visibilityRadius, child=child)
+        super().__init__(nLatticeLength, x, y, reproductionRate=reproductionRate, visibilityRadius=visibilityRadius, child=child)
         self.life = 20000
         if child:
             self.hunger = round(Prey.maxHunger/10) # Children start out with semi-full hunger bar.
@@ -73,7 +73,7 @@ class Prey(Animal):
                     self.step(self.preyToFollow)
                 else:
                     r = rand()
-                    if r < self.probabilityOfExploration and self.hunger < 680 and self.lastPlantEaten: # Only explore if the food is running low.
+                    if r < self.probabilityOfExploration and self.hunger < 480 and self.lastPlantEaten: # Only explore if the food is running low.
                         self.stepAway(self.lastPlantEaten)
                     else:
                         self._random_walk()
@@ -127,7 +127,7 @@ class Prey(Animal):
         if self.iterationsMovingToFood > 30:
             self.plantToFollow=[]
 
-        if np.size(self.plantToFollow) < 2 and self.hunger < 680:
+        if np.size(self.plantToFollow) < 2 and self.hunger < 480:
             # The prey will look for new food if it has not yet seen any food or if it has been moving towards the same
             # food for a long time. A new target is choosen to avoid preys getting stuck trying to eat food which has
             # already been eaten.
@@ -219,12 +219,33 @@ class Prey(Animal):
         if r < self.followHerdProbability:
         #if r < 0.7:
             # Find prey in alert radius.               ! ! !(RIGHT NOW THE VISIBILITY RADIUS IS USED)! ! !
-            visSquare = list(self.visibility())
-            possibleAlertList = []
+
+        #possibleAlertList = []
             for specificPrey in self.preys:
-                cord = (specificPrey.x, specificPrey.y)
-                if cord in visSquare:
-                    possibleAlertList.append(cord)
+                # Noticably faster than using the visibility sphere
+                diffX = abs(specificPrey.x - self.x)
+                diffY = abs(specificPrey.y - self.y)
+                if diffX > self._latticeLength / 2:
+                    diffX = self._latticeLength - diffX
+                if diffY > self._latticeLength / 2:
+                    diffY = self._latticeLength - diffY
+                if diffX+diffY < self._visibilityRadius and diffX+diffY > 0 and specificPrey.alertStatus==0:
+                    #possibleAlertList.append([objects[i].x,objects[i].y])
+                    specificPrey.alertStatus = 5
+                    specificPrey.predatorToAvoid = self.predatorToAvoid
+                    specificPrey.lastPlantEaten = [specificPrey.x, specificPrey.y]
+                    specificPrey.iterationsSinceEat == 0
+                    specificPrey.fleeTimer = Prey.maxFleeTime
+
+            #visSquare = list(self.visibility())
+            #possibleAlertList = []
+            #for specificPrey in self.preys:
+            #    cord = (specificPrey.x, specificPrey.y)
+            #    if cord in visSquare:
+            #        possibleAlertList.append(cord)
+
+
+            '''    
             if possibleAlertList:
                 # Find the preys of found coordinates
                 preysToAlert = []
@@ -242,3 +263,4 @@ class Prey(Animal):
                         specificPrey.iterationsSinceEat == 0
                         specificPrey.fleeTimer = Prey.maxFleeTime
                         #specificPrey.WarnOtherPrey() # warn new prey (iteratively)
+            '''

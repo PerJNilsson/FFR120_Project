@@ -43,13 +43,13 @@ class Plant:
     numberOfPlants=0    #
     plantObjects=[]     # Variables shared by all plant objects
     clusterObjects=[]   #
-    maxNumberOfCharges = 17
+    maxNumberOfCharges = 20
 
     def __init__(self,coordinates,clusterID):
         self.x=coordinates[0]
         self.y=coordinates[1]
         self.clusterID=clusterID # This ID value links the plant to the correct cluster (its parent cluster).
-        self.foodValue=40 # The amount of food recieved when consuming this plant.
+        self.foodValue=60 # The amount of food recieved when consuming this plant.
         self.numberOfCharges = Plant.maxNumberOfCharges
         Plant.numberOfPlants += 1
 

@@ -24,40 +24,59 @@
           </section>
         </section>
 
-				<section>
-					<img src="show.png" alt="Frame of the simulation" width="400" height="400" align="left">
-					<ul>
-						<li> Introduction <font size="6">-Per </font></li>
-						<li> Method <font size="6">- Robin </font></li>
-						<li> Results and discussion <font size="6">- Jan </font></li>
-					</ul>
-				</section>
+        <section>
+          <img src="show.png" alt="Frame of the simulation" width="400" height="400" align="left">
+          <ul>
+            <li> Introduction <font size="6">-Per </font></li>
+            <li> Method <font size="6">- Robin </font></li>
+            <li> Results and discussion <font size="6">- Jan </font></li>
+          </ul>
+        </section>
         <section>
           <section>
             <h3>Agent based modeling</h3>
-            <p class="fragment"  align="left">Start out simple</p>
-            <p class="fragment"  align="left">Implement herd behaviours <br>
-            	<font size="5">&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp-Follow herd</font> <br>
-            	<font size="5"> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp-Warn herd</font></p>
+            <ul>
+              <li class="fragment" data-fragment-index="1">Start out simple</li>
+              <li class="fragment" data-fragment-index="1">Implement herd behaviours</li>
+              <ul>
+                <li class="fragment" data-fragment-index="2">Follow herd</li>
+                <li class="fragment" data-fragment-index="2">Warn herd</li>
+              </ul>
+            </ul>
           </section>
           <section>
-          	<video width="600" height="600" controls>
-  				<source src="flee.mp4" type="video/mp4">
-  					Flee behaviour
-			</video>
-          </section>
-                    <section>
-          	<video width="600" height="600" controls>
-  				<source src="follow.mp4" type="video/mp4">
-			</video>
+            <video width="600" height="600" controls>
+              <source src="flee.mp4" type="video/mp4">
+                Flee behaviour
+            </video>
           </section>
           <section>
-            <h2>Prey</h2>
-            <ol>
-              <li class+"fragment">Look for plants/predators/prey</li>
-              <li class+"fragment">Walk depending on results</li>
-              <li class+"fragment">Age, starve or reproduce</li>
-            </ol>
+            <video width="600" height="600" controls>
+              <source src="follow.mp4" type="video/mp4">
+            </video>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h3>Discussion</h3>
+            <ul>
+              <li class="fragment">Threshold</li>
+              <li class="fragment">High prey/predator ratio</li>
+              <li class="fragment">Have we over-engineered our agents?</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Delimitations</h3>
+            <ul>
+              <li class="fragment">Selfish individual in a cooperative herd</li>
+              <li class="fragment">Homogeneous agents</li>
+              <li class="fragment">More type of agents</li>
+            </ul>
+          </section>
+        </section>
+          <section>
+            <h3>Thank you for listening!</h3>
+            Questions? 
           </section>
         </section>
 			</div>
@@ -67,10 +86,8 @@
 		<script src="js/reveal.js"></script>
 
 		<script>
-			// More info about config & dependencies:
-			// - https://github.com/hakimel/reveal.js#configuration
-			// - https://github.com/hakimel/reveal.js#dependencies
 			Reveal.initialize({
+        controlsLayout: 'edges',
 				dependencies: [
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
